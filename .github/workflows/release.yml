@@ -37,4 +37,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN }}
           GPG_FINGERPRINT: ${{ steps.import_gpg.outputs.fingerprint  }}
         run: |
-          goreleaser release --parallelism 2 --rm-dist --timeout 1h --release-notes .release_info.md
+          goreleaser release --parallelism 2 --clean --timeout 1h --release-notes .release_info.md
