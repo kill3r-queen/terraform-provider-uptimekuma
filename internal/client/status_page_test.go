@@ -80,7 +80,7 @@ func TestStatusPageOperations(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 
 		// Handle status page requests
-		if r.URL.Path == "/statuspages" {
+		if r.URL.Path == "/status-pages" {
 			switch r.Method {
 			case http.MethodGet:
 				// List status pages
@@ -126,7 +126,7 @@ func TestStatusPageOperations(t *testing.T) {
 				})
 				return
 			}
-		} else if strings.HasPrefix(r.URL.Path, "/statuspages/") {
+		} else if strings.HasPrefix(r.URL.Path, "/status-pages/") {
 			parts := strings.Split(r.URL.Path, "/")
 			if len(parts) < 3 {
 				w.WriteHeader(http.StatusBadRequest)
