@@ -1,6 +1,8 @@
 module github.com/ehealth-co-id/terraform-provider-uptimekuma
 
-go 1.23
+go 1.23.0
+
+toolchain go1.24.2
 
 require (
 	github.com/hashicorp/terraform-plugin-framework v1.14.1

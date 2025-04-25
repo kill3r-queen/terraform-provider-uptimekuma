@@ -164,7 +164,7 @@ func (c *Client) PostIncident(ctx context.Context, slug string, request *PostInc
 	}
 
 	var result PostIncidentResponse
-	path := fmt.Sprintf("/statuspages/%s/incident", slug)
+	path := fmt.Sprintf("/status-pages/%s/incident", slug)
 	if err := c.Post(ctx, path, bytes.NewReader(data), &result); err != nil {
 		return nil, fmt.Errorf("failed to post incident to status page %s: %w", slug, err)
 	}
@@ -174,7 +174,7 @@ func (c *Client) PostIncident(ctx context.Context, slug string, request *PostInc
 // UnpinIncident unpins an incident from a status page
 func (c *Client) UnpinIncident(ctx context.Context, slug string) (*UnpinIncidentResponse, error) {
 	var result UnpinIncidentResponse
-	path := fmt.Sprintf("/statuspages/%s/incident/unpin", slug)
+	path := fmt.Sprintf("/status-pages/%s/incident/unpin", slug)
 	if err := c.Delete(ctx, path, &result); err != nil {
 		return nil, fmt.Errorf("failed to unpin incident from status page %s: %w", slug, err)
 	}
