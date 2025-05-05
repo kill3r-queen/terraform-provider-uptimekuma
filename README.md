@@ -2,6 +2,12 @@
 
 This Terraform provider allows you to manage [Uptime Kuma](https://github.com/louislam/uptime-kuma) resources through Terraform. Uptime Kuma is a self-hosted monitoring tool similar to Uptime Robot.
 
+
+use this 
+https://github.com/alencarsouza/Uptime-Kuma-Web-API/tree/feature/upgrade-uptime-kuma-api-version
+https://github.com/MedAziz11/Uptime-Kuma-Web-API/pull/59
+https://hub.docker.com/r/haukemarquardt/uptimekuma_api
+
 ## Features
 
 - **Monitors**: Create and manage HTTP, Ping, Port, DNS, Keyword, and other monitor types
