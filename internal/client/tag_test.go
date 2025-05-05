@@ -34,7 +34,6 @@ func TestTagOperations(t *testing.T) {
 		if r.URL.Path == "/login/access-token" {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			// FIX: Check error on Encode (Line 37).
 			err := json.NewEncoder(w).Encode(TokenResponse{
 				AccessToken: "test-token-12345",
 				TokenType:   "Bearer",
@@ -59,9 +58,8 @@ func TestTagOperations(t *testing.T) {
 		if r.URL.Path == "/tags" {
 			switch r.Method {
 			case http.MethodGet:
-				// List tags
+				// List tags.
 				w.WriteHeader(http.StatusOK)
-				// FIX: Check error on Encode (Line 59).
 				err := json.NewEncoder(w).Encode(tags)
 				if err != nil {
 					fmt.Printf("ERROR encoding tag list: %v\n", err)
@@ -78,7 +76,6 @@ func TestTagOperations(t *testing.T) {
 				newTag.ID = len(tags) + 1    // Simple ID assignment for test.
 				tags = append(tags, &newTag) // Append pointer if tags slice holds pointers.
 				w.WriteHeader(http.StatusOK) // Or http.StatusCreated (201).
-				// FIX: Check error on Encode (Line 71).
 				// Return the tag with the assigned ID.
 				err := json.NewEncoder(w).Encode(newTag)
 				if err != nil {
@@ -121,9 +118,8 @@ func TestTagOperations(t *testing.T) {
 
 			switch r.Method {
 			case http.MethodGet:
-				// Get tag
+				// Get tag.
 				w.WriteHeader(http.StatusOK)
-				// FIX: Check error on Encode (Line 107).
 				err := json.NewEncoder(w).Encode(tags[tagIndex])
 				if err != nil {
 					fmt.Printf("ERROR encoding single tag: %v\n", err)
@@ -131,7 +127,7 @@ func TestTagOperations(t *testing.T) {
 				}
 				return
 			case http.MethodDelete:
-				// Delete tag
+				// Delete tag.
 				tags = append(tags[:tagIndex], tags[tagIndex+1:]...)
 				w.WriteHeader(http.StatusOK)
 				// Optionally encode a success message.
@@ -233,5 +229,3 @@ func TestTagOperations(t *testing.T) {
 		fmt.Printf("DEBUG: Verified tag %d deletion.\n", deleteTargetID)
 	}
 }
-
-// NOTE: Period added for godot linter.

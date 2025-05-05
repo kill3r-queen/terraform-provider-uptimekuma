@@ -8,10 +8,10 @@ import (
 	"strconv"
 )
 
-// MonitorType represents the type of monitor
+// MonitorType represents the type of monitor.
 type MonitorType string
 
-// Monitor types
+// Monitor types.
 const (
 	MonitorTypeHTTP      MonitorType = "http"
 	MonitorTypePing      MonitorType = "ping"
@@ -32,7 +32,7 @@ const (
 	MonitorTypeRedis     MonitorType = "redis"
 )
 
-// AuthMethod represents the authentication method for monitors
+// AuthMethod represents the authentication method for monitors.
 type AuthMethod string
 
 // Auth methods
@@ -43,7 +43,7 @@ const (
 	AuthMethodMTLS  AuthMethod = "mtls"
 )
 
-// Monitor represents an Uptime Kuma monitor
+// Monitor represents an Uptime Kuma monitor.
 type Monitor struct {
 	ID                  int           `json:"id,omitempty"`
 	Type                MonitorType   `json:"type"`
@@ -78,7 +78,7 @@ type Monitor struct {
 	DockerHost          int           `json:"docker_host,omitempty"`
 }
 
-// GetMonitors retrieves all monitors
+// GetMonitors retrieves all monitors.
 func (c *Client) GetMonitors(ctx context.Context) ([]Monitor, error) {
 	var result []Monitor
 	if err := c.Get(ctx, "/monitors", &result); err != nil {
@@ -87,7 +87,7 @@ func (c *Client) GetMonitors(ctx context.Context) ([]Monitor, error) {
 	return result, nil
 }
 
-// GetMonitor retrieves a specific monitor by ID
+// GetMonitor retrieves a specific monitor by ID.
 func (c *Client) GetMonitor(ctx context.Context, id int) (*Monitor, error) {
 	var result Monitor
 	path := fmt.Sprintf("/monitors/%d", id)
@@ -97,7 +97,7 @@ func (c *Client) GetMonitor(ctx context.Context, id int) (*Monitor, error) {
 	return &result, nil
 }
 
-// CreateMonitor creates a new monitor
+// CreateMonitor creates a new monitor.
 func (c *Client) CreateMonitor(ctx context.Context, monitor *Monitor) (*Monitor, error) {
 	data, err := json.Marshal(monitor)
 	if err != nil {
@@ -111,7 +111,7 @@ func (c *Client) CreateMonitor(ctx context.Context, monitor *Monitor) (*Monitor,
 	return &result, nil
 }
 
-// UpdateMonitor updates an existing monitor
+// UpdateMonitor updates an existing monitor.
 func (c *Client) UpdateMonitor(ctx context.Context, id int, monitor *Monitor) (*Monitor, error) {
 	data, err := json.Marshal(monitor)
 	if err != nil {
@@ -126,7 +126,7 @@ func (c *Client) UpdateMonitor(ctx context.Context, id int, monitor *Monitor) (*
 	return &result, nil
 }
 
-// DeleteMonitor deletes a monitor
+// DeleteMonitor deletes a monitor.
 func (c *Client) DeleteMonitor(ctx context.Context, id int) error {
 	path := fmt.Sprintf("/monitors/%d", id)
 	if err := c.Delete(ctx, path, nil); err != nil {
@@ -135,7 +135,7 @@ func (c *Client) DeleteMonitor(ctx context.Context, id int) error {
 	return nil
 }
 
-// PauseMonitor pauses a monitor
+// PauseMonitor pauses a monitor.
 func (c *Client) PauseMonitor(ctx context.Context, id int) error {
 	path := fmt.Sprintf("/monitors/%d/pause", id)
 	if err := c.Post(ctx, path, nil, nil); err != nil {
@@ -144,7 +144,7 @@ func (c *Client) PauseMonitor(ctx context.Context, id int) error {
 	return nil
 }
 
-// ResumeMonitor resumes a paused monitor
+// ResumeMonitor resumes a paused monitor.
 func (c *Client) ResumeMonitor(ctx context.Context, id int) error {
 	path := fmt.Sprintf("/monitors/%d/resume", id)
 	if err := c.Post(ctx, path, nil, nil); err != nil {
@@ -153,7 +153,7 @@ func (c *Client) ResumeMonitor(ctx context.Context, id int) error {
 	return nil
 }
 
-// GetMonitorBeats retrieves the heartbeats for a monitor
+// GetMonitorBeats retrieves the heartbeats for a monitor.
 func (c *Client) GetMonitorBeats(ctx context.Context, id int, hours float64) (interface{}, error) {
 	path := fmt.Sprintf("/monitors/%d/beats?hours=%s", id, strconv.FormatFloat(hours, 'f', -1, 64))
 	var result interface{}
@@ -163,7 +163,7 @@ func (c *Client) GetMonitorBeats(ctx context.Context, id int, hours float64) (in
 	return result, nil
 }
 
-// AddMonitorTag adds a tag to a monitor
+// AddMonitorTag adds a tag to a monitor.
 func (c *Client) AddMonitorTag(ctx context.Context, monitorID int, tagID int, value string) error {
 	tag := struct {
 		TagID int    `json:"tag_id"`
@@ -185,7 +185,7 @@ func (c *Client) AddMonitorTag(ctx context.Context, monitorID int, tagID int, va
 	return nil
 }
 
-// DeleteMonitorTag removes a tag from a monitor
+// DeleteMonitorTag removes a tag from a monitor.
 func (c *Client) DeleteMonitorTag(ctx context.Context, monitorID int, tagID int) error {
 	tag := struct {
 		TagID int `json:"tag_id"`

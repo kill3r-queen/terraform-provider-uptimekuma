@@ -11,13 +11,13 @@ import (
 	"time"
 )
 
-// TestClientAuthentication tests the authentication flow
+// TestClientAuthentication tests the authentication flow.
 func TestClientAuthentication(t *testing.T) {
 	// Setup mock server
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Check if this is an authentication request
+		// Check if this is an authentication request.
 		if r.URL.Path == "/login/access-token" && r.Method == http.MethodPost {
-			// Verify the auth request is correct
+			// Verify the auth request is correct.
 			if err := r.ParseForm(); err != nil {
 				t.Fatalf("Failed to parse form: %v", err)
 			}
@@ -29,7 +29,7 @@ func TestClientAuthentication(t *testing.T) {
 				return
 			}
 
-			// Return token response
+			// Return token response.
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			response := TokenResponse{
@@ -42,14 +42,14 @@ func TestClientAuthentication(t *testing.T) {
 			return
 		}
 
-		// Check auth header for other requests
+		// Check auth header for other requests.
 		authHeader := r.Header.Get("Authorization")
 		if authHeader != "Bearer test-token-12345" {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
-		// Mock successful response for all other requests
+		// Mock successful response for all other requests.
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		if _, err := w.Write([]byte(`{"status":"success"}`)); err != nil {
@@ -58,7 +58,7 @@ func TestClientAuthentication(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create client
+	// Create client.
 	config := &Config{
 		BaseURL:  server.URL,
 		Username: "testuser",
@@ -71,7 +71,7 @@ func TestClientAuthentication(t *testing.T) {
 		t.Fatalf("Failed to create client: %v", err)
 	}
 
-	// Test a request that should trigger authentication
+	// Test a request that should trigger authentication.
 	var result map[string]interface{}
 	err = client.Get(context.Background(), "/test", &result)
 	if err != nil {
@@ -83,20 +83,20 @@ func TestClientAuthentication(t *testing.T) {
 	}
 }
 
-// TestInvalidAuthentication tests authentication failure
+// TestInvalidAuthentication tests authentication failure.
 func TestInvalidAuthentication(t *testing.T) {
 	// Setup mock server
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Check if this is an authentication request
+		// Check if this is an authentication request.
 		if r.URL.Path == "/login/access-token" && r.Method == http.MethodPost {
-			// Return unauthorized
+			// Return unauthorized.
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 	}))
 	defer server.Close()
 
-	// Create client with invalid credentials
+	// Create client with invalid credentials.
 	config := &Config{
 		BaseURL:  server.URL,
 		Username: "invalid",
@@ -109,7 +109,7 @@ func TestInvalidAuthentication(t *testing.T) {
 		t.Fatalf("Failed to create client: %v", err)
 	}
 
-	// Test a request that should fail authentication
+	// Test a request that should fail authentication.
 	var result map[string]interface{}
 	err = client.Get(context.Background(), "/test", &result)
 	if err == nil {
@@ -117,11 +117,11 @@ func TestInvalidAuthentication(t *testing.T) {
 	}
 }
 
-// TestClientOperations tests all HTTP methods
+// TestClientOperations tests all HTTP methods.
 func TestClientOperations(t *testing.T) {
 	// Setup mock server
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// First handle auth request
+		// First handle auth request.
 		if r.URL.Path == "/login/access-token" && r.Method == http.MethodPost {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
@@ -135,14 +135,14 @@ func TestClientOperations(t *testing.T) {
 			return
 		}
 
-		// Check auth header
+		// Check auth header.
 		authHeader := r.Header.Get("Authorization")
 		if authHeader != "Bearer test-token-12345" {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
-		// Respond based on the HTTP method
+		// Respond based on the HTTP method.
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 
@@ -173,7 +173,7 @@ func TestClientOperations(t *testing.T) {
 	}))
 	defer server.Close()
 
-	// Create client
+	// Create client.
 	config := &Config{
 		BaseURL:  server.URL,
 		Username: "testuser",
@@ -189,7 +189,7 @@ func TestClientOperations(t *testing.T) {
 	ctx := context.Background()
 	var result map[string]interface{}
 
-	// Test GET
+	// Test GET.
 	if err := client.Get(ctx, "/test", &result); err != nil {
 		t.Fatalf("GET request failed: %v", err)
 	}
@@ -197,7 +197,7 @@ func TestClientOperations(t *testing.T) {
 		t.Errorf("Unexpected GET response: %v", result)
 	}
 
-	// Test POST
+	// Test POST.
 	body := strings.NewReader(`{"key":"value"}`)
 	if err := client.Post(ctx, "/test", body, &result); err != nil {
 		t.Fatalf("POST request failed: %v", err)
@@ -206,7 +206,7 @@ func TestClientOperations(t *testing.T) {
 		t.Errorf("Unexpected POST response: %v", result)
 	}
 
-	// Test PUT
+	// Test PUT.
 	body = strings.NewReader(`{"key":"updated"}`)
 	if err := client.Put(ctx, "/test", body, &result); err != nil {
 		t.Fatalf("PUT request failed: %v", err)
@@ -215,7 +215,7 @@ func TestClientOperations(t *testing.T) {
 		t.Errorf("Unexpected PUT response: %v", result)
 	}
 
-	// Test PATCH
+	// Test PATCH.
 	body = strings.NewReader(`{"key":"patched"}`)
 	if err := client.Patch(ctx, "/test", body, &result); err != nil {
 		t.Fatalf("PATCH request failed: %v", err)
@@ -224,7 +224,7 @@ func TestClientOperations(t *testing.T) {
 		t.Errorf("Unexpected PATCH response: %v", result)
 	}
 
-	// Test DELETE
+	// Test DELETE.
 	if err := client.Delete(ctx, "/test", &result); err != nil {
 		t.Fatalf("DELETE request failed: %v", err)
 	}

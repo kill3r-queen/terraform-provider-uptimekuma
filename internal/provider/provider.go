@@ -24,8 +24,8 @@ var _ provider.ProviderWithEphemeralResources = &UptimeKumaProvider{}
 
 // UptimeKumaProvider defines the provider implementation.
 type UptimeKumaProvider struct {
-	// version is set to the provider version on release, "dev" when the
-	// provider is built and ran locally, and "test" when running acceptance
+	// version is set to the provider version on release, "dev" when the.
+	// provider is built and ran locally, and "test" when running acceptance.
 	// testing.
 	version string
 }
@@ -93,7 +93,7 @@ func (p *UptimeKumaProvider) Configure(ctx context.Context, req provider.Configu
 		InsecureHTTPS: insecureHTTPS,
 	}
 
-	// Create client
+	// Create client.
 	apiClient, err := client.New(config)
 	if err != nil {
 		resp.Diagnostics.AddError(

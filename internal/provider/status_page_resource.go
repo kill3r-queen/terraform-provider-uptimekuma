@@ -185,14 +185,14 @@ func (r *StatusPageResource) Configure(ctx context.Context, req resource.Configu
 func (r *StatusPageResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data StatusPageResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan data into the model.
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Create the status page first with just slug and title
+	// Create the status page first with just slug and title.
 	createRequest := &client.AddStatusPageRequest{
 		Slug:  data.Slug.ValueString(),
 		Title: data.Title.ValueString(),
@@ -213,21 +213,21 @@ func (r *StatusPageResource) Create(ctx context.Context, req resource.CreateRequ
 		"message": createResp.Msg,
 	})
 
-	// Now get the status page to find its ID and other details
+	// Now get the status page to find its ID and other details.
 	createdPage, err := r.client.GetStatusPage(ctx, data.Slug.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to retrieve created status page: %s", err))
 		return
 	}
 
-	// Now update the status page with all other attributes
+	// Now update the status page with all other attributes.
 	updateRequest := &client.SaveStatusPageRequest{
 		Title:     data.Title.ValueString(),
 		Published: data.Published.ValueBool(),
 		ShowTags:  data.ShowTags.ValueBool(),
 	}
 
-	// Set optional fields
+	// Set optional fields.
 	if !data.Description.IsNull() {
 		updateRequest.Description = data.Description.ValueString()
 	}
@@ -236,7 +236,7 @@ func (r *StatusPageResource) Create(ctx context.Context, req resource.CreateRequ
 		updateRequest.Theme = data.Theme.ValueString()
 	}
 
-	// Convert domain name list
+	// Convert domain name list.
 	if len(data.DomainNameList) > 0 {
 		domainNames := make([]string, 0, len(data.DomainNameList))
 		for _, domain := range data.DomainNameList {
@@ -265,7 +265,7 @@ func (r *StatusPageResource) Create(ctx context.Context, req resource.CreateRequ
 		updateRequest.ShowPoweredBy = data.ShowPoweredBy.ValueBool()
 	}
 
-	// Add public groups
+	// Add public groups.
 	if len(data.PublicGroupList) > 0 {
 		groups := make([]client.PublicGroup, 0, len(data.PublicGroupList))
 		for _, group := range data.PublicGroupList {
@@ -286,38 +286,38 @@ func (r *StatusPageResource) Create(ctx context.Context, req resource.CreateRequ
 		updateRequest.PublicGroupList = groups
 	}
 
-	// Update the status page with all attributes
+	// Update the status page with all attributes.
 	_, err = r.client.UpdateStatusPage(ctx, data.Slug.ValueString(), updateRequest)
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to update status page attributes: %s", err))
 		return
 	}
 
-	// Update local state
+	// Update local state.
 	data.ID = types.Int64Value(int64(createdPage.ID))
 
-	// Save data into Terraform state
+	// Save data into Terraform state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *StatusPageResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data StatusPageResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state data into the model.
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Read status page from API
+	// Read status page from API.
 	statusPage, err := r.client.GetStatusPage(ctx, data.Slug.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read status page '%s': %s", data.Slug.ValueString(), err))
 		return
 	}
 
-	// Update model with API data
+	// Update model with API data.
 	data.ID = types.Int64Value(int64(statusPage.ID))
 	data.Title = types.StringValue(statusPage.Title)
 	data.Description = types.StringValue(statusPage.Description)
@@ -325,7 +325,7 @@ func (r *StatusPageResource) Read(ctx context.Context, req resource.ReadRequest,
 	data.Published = types.BoolValue(statusPage.Published)
 	data.ShowTags = types.BoolValue(statusPage.ShowTags)
 
-	// Convert domain names
+	// Convert domain names.
 	domainNames := make([]types.String, 0, len(statusPage.DomainNameList))
 	for _, domain := range statusPage.DomainNameList {
 		domainNames = append(domainNames, types.StringValue(domain))
@@ -338,7 +338,7 @@ func (r *StatusPageResource) Read(ctx context.Context, req resource.ReadRequest,
 	data.Icon = types.StringValue(statusPage.Icon)
 	data.ShowPoweredBy = types.BoolValue(statusPage.ShowPoweredBy)
 
-	// Convert public groups
+	// Convert public groups.
 	groups := make([]PublicGroupModel, 0, len(statusPage.PublicGroupList))
 	for _, apiGroup := range statusPage.PublicGroupList {
 		group := PublicGroupModel{
@@ -347,7 +347,7 @@ func (r *StatusPageResource) Read(ctx context.Context, req resource.ReadRequest,
 			Weight: types.Int64Value(int64(apiGroup.Weight)),
 		}
 
-		// Convert monitor list
+		// Convert monitor list.
 		monitors := make([]types.Int64, 0, len(apiGroup.MonitorList))
 		for _, monitorID := range apiGroup.MonitorList {
 			monitors = append(monitors, types.Int64Value(int64(monitorID)))
@@ -358,28 +358,28 @@ func (r *StatusPageResource) Read(ctx context.Context, req resource.ReadRequest,
 	}
 	data.PublicGroupList = groups
 
-	// Save updated data into Terraform state
+	// Save updated data into Terraform state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *StatusPageResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data StatusPageResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan data into the model.
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Prepare update request
+	// Prepare update request.
 	updateRequest := &client.SaveStatusPageRequest{
 		Title:     data.Title.ValueString(),
 		Published: data.Published.ValueBool(),
 		ShowTags:  data.ShowTags.ValueBool(),
 	}
 
-	// Set optional fields
+	// Set optional fields.
 	if !data.Description.IsNull() {
 		updateRequest.Description = data.Description.ValueString()
 	}
@@ -388,7 +388,7 @@ func (r *StatusPageResource) Update(ctx context.Context, req resource.UpdateRequ
 		updateRequest.Theme = data.Theme.ValueString()
 	}
 
-	// Convert domain name list
+	// Convert domain name list.
 	if len(data.DomainNameList) > 0 {
 		domainNames := make([]string, 0, len(data.DomainNameList))
 		for _, domain := range data.DomainNameList {
@@ -417,7 +417,7 @@ func (r *StatusPageResource) Update(ctx context.Context, req resource.UpdateRequ
 		updateRequest.ShowPoweredBy = data.ShowPoweredBy.ValueBool()
 	}
 
-	// Add public groups
+	// Add public groups.
 	if len(data.PublicGroupList) > 0 {
 		groups := make([]client.PublicGroup, 0, len(data.PublicGroupList))
 		for _, group := range data.PublicGroupList {
@@ -438,7 +438,7 @@ func (r *StatusPageResource) Update(ctx context.Context, req resource.UpdateRequ
 		updateRequest.PublicGroupList = groups
 	}
 
-	// Update the status page
+	// Update the status page.
 	tflog.Info(ctx, "Updating status page", map[string]interface{}{
 		"slug": data.Slug.ValueString(),
 	})
@@ -449,14 +449,14 @@ func (r *StatusPageResource) Update(ctx context.Context, req resource.UpdateRequ
 		return
 	}
 
-	// Refresh the data from the API
+	// Refresh the data from the API.
 	updatedPage, err := r.client.GetStatusPage(ctx, data.Slug.ValueString())
 	if err != nil {
 		resp.Diagnostics.AddError("Client Error", fmt.Sprintf("Unable to read updated status page: %s", err))
 		return
 	}
 
-	// Update the resource's groups with their IDs from the API
+	// Update the resource's groups with their IDs from the API.
 	if len(updatedPage.PublicGroupList) > 0 && len(data.PublicGroupList) > 0 {
 		for i, apiGroup := range updatedPage.PublicGroupList {
 			if i < len(data.PublicGroupList) {
@@ -465,21 +465,21 @@ func (r *StatusPageResource) Update(ctx context.Context, req resource.UpdateRequ
 		}
 	}
 
-	// Save updated data into Terraform state
+	// Save updated data into Terraform state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *StatusPageResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data StatusPageResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state data into the model.
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Delete the status page
+	// Delete the status page.
 	tflog.Info(ctx, "Deleting status page", map[string]interface{}{
 		"slug": data.Slug.ValueString(),
 	})
@@ -492,6 +492,6 @@ func (r *StatusPageResource) Delete(ctx context.Context, req resource.DeleteRequ
 }
 
 func (r *StatusPageResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	// Slug is the primary identifier for status pages
+	// Slug is the primary identifier for status pages.
 	resource.ImportStatePassthroughID(ctx, path.Root("slug"), req, resp)
 }

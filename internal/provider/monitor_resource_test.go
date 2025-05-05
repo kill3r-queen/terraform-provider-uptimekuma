@@ -1,5 +1,5 @@
 // Copyright (c) HashiCorp, Inc.
-// SPDX-License-Identifier: MPL-2.0
+// SPDX-License-Identifier: MPL-2.0.
 
 package provider
 
@@ -103,7 +103,7 @@ resource "uptimekuma_monitor" "test" {
 }
 
 func TestAccPingMonitorResource(t *testing.T) {
-	// CHANGE HERE: Define a description for the ping test
+	// CHANGE HERE: Define a description for the ping test.
 	pingDescription := "Test Ping Description"
 
 	resource.Test(t, resource.TestCase{
@@ -111,7 +111,7 @@ func TestAccPingMonitorResource(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				// CHANGE HERE: Pass 'pingDescription' as the third argument (line 112 in original error)
+				// CHANGE HERE: Pass 'pingDescription' as the third argument (line 112 in original error).
 				Config: testAccPingMonitorResourceConfig("Ping Monitor", "example.com", pingDescription),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
@@ -129,7 +129,7 @@ func TestAccPingMonitorResource(t *testing.T) {
 						tfjsonpath.New("hostname"),
 						knownvalue.StringExact("example.com"),
 					),
-					// CHANGE HERE: Add state check for description
+					// CHANGE HERE: Add state check for description.
 					statecheck.ExpectKnownValue(
 						"uptimekuma_monitor.ping_test",
 						tfjsonpath.New("description"),
@@ -141,8 +141,7 @@ func TestAccPingMonitorResource(t *testing.T) {
 	})
 }
 
-// Keep the testAccPingMonitorResourceConfig function definition as you already had it
-// (it correctly accepts 3 arguments):
+// Keep the testAccPingMonitorResourceConfig function definition as you already had it.
 func testAccPingMonitorResourceConfig(name, hostname, description string) string {
 	return fmt.Sprintf(`
 provider "uptimekuma" {

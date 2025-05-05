@@ -19,7 +19,7 @@ func TestAccStatusPageResource(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
-			// Create and Read testing
+			// Create and Read testing.
 			{
 				Config: testAccStatusPageResourceConfig("test-page", "Test Status Page", "System status page for testing"),
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -45,13 +45,13 @@ func TestAccStatusPageResource(t *testing.T) {
 					),
 				},
 			},
-			// ImportState testing
+			// ImportState testing.
 			{
 				ResourceName:      "uptimekuma_status_page.test",
 				ImportState:       true,
 				ImportStateVerify: true,
 			},
-			// Update and Read testing
+			// Update and Read testing.
 			{
 				Config: testAccStatusPageResourceConfig("test-page", "Updated Status Page", "Updated description"),
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -72,7 +72,7 @@ func TestAccStatusPageResource(t *testing.T) {
 					),
 				},
 			},
-			// Delete testing automatically occurs in TestCase
+			// Delete testing automatically occurs in TestCase.
 		},
 	})
 }
@@ -105,7 +105,7 @@ func TestAccStatusPageResourceWithGroups(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
-			// Create and Read testing with monitor groups
+			// Create and Read testing with monitor groups.
 			{
 				Config: testAccStatusPageResourceWithGroupsConfig("test-page-with-groups", "Status Page With Groups"),
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -119,11 +119,11 @@ func TestAccStatusPageResourceWithGroups(t *testing.T) {
 						tfjsonpath.New("title"),
 						knownvalue.StringExact("Status Page With Groups"),
 					),
-					// We can't easily test the exact structure of nested blocks like public_group_list
-					// in this basic test, but we can verify the status page itself is created
+					// We can't easily test the exact structure of nested blocks like public_group_list.
+					// in this basic test, but we can verify the status page itself is created.
 				},
 			},
-			// Delete testing automatically occurs in TestCase
+			// Delete testing automatically occurs in TestCase.
 		},
 	})
 }

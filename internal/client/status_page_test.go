@@ -3,7 +3,7 @@ package client
 import (
 	"context"
 	"encoding/json"
-	"fmt" // Import fmt for logging errors in handler
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -11,10 +11,8 @@ import (
 	"time"
 )
 
-// TestStatusPageOperations tests status page API operations
+// TestStatusPageOperations tests status page API operations.
 func TestStatusPageOperations(t *testing.T) {
-	// Setup status pages for the mock server
-	// (Using pointers to allow modification within the handler)
 	statusPages := []*StatusPage{
 		{
 			ID:             1,
@@ -58,13 +56,12 @@ func TestStatusPageOperations(t *testing.T) {
 		},
 	}
 
-	// Setup mock server
+	// Setup mock server.
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Handle authentication
+		// Handle authentication.
 		if r.URL.Path == "/login/access-token" {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			// FIX: Check error on Encode (Line 66)
 			err := json.NewEncoder(w).Encode(TokenResponse{
 				AccessToken: "test-token-12345",
 				TokenType:   "Bearer",
@@ -76,7 +73,7 @@ func TestStatusPageOperations(t *testing.T) {
 			return
 		}
 
-		// Check auth header
+		// Check auth header.
 		authHeader := r.Header.Get("Authorization")
 		if authHeader != "Bearer test-token-12345" {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
@@ -85,7 +82,7 @@ func TestStatusPageOperations(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 
-		// Handle status page requests
+		// Handle status page requests.
 		if r.URL.Path == "/status-pages" {
 			switch r.Method {
 			case http.MethodGet:
@@ -107,14 +104,14 @@ func TestStatusPageOperations(t *testing.T) {
 				}
 				return
 			case http.MethodPost:
-				// Create status page
+				// Create status page.
 				var request AddStatusPageRequest
 				if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 					http.Error(w, "Bad request body", http.StatusBadRequest)
 					return
 				}
 
-				// Check for duplicate slug
+				// Check for duplicate slug.
 				for _, sp := range statusPages {
 					if sp.Slug == request.Slug {
 						http.Error(w, "Duplicate slug", http.StatusConflict)
@@ -122,26 +119,25 @@ func TestStatusPageOperations(t *testing.T) {
 					}
 				}
 
-				// Create new status page
+				// Create new status page.
 				newStatusPage := &StatusPage{
-					ID:             len(statusPages) + 1, // Simple ID assignment for test
+					ID:             len(statusPages) + 1, // Simple ID assignment for test.
 					Slug:           request.Slug,
 					Title:          request.Title,
-					Description:    request.Msg, // Assuming Msg maps to Description
-					Theme:          "light",     // Default or from request if included
-					Published:      true,        // Default or from request
-					ShowTags:       false,       // Default or from request
+					Description:    request.Msg, // Assuming Msg maps to Description.
+					Theme:          "light",     // Default or from request if included.
+					Published:      true,        // Default or from request.
+					ShowTags:       false,       // Default or from request.
 					DomainNameList: []string{},
-					Icon:           "/icon.svg", // Default or from request
-					ShowPoweredBy:  true,        // Default or from request
+					Icon:           "/icon.svg", // Default or from request.
+					ShowPoweredBy:  true,        // Default or from request.
 				}
 				statusPages = append(statusPages, newStatusPage)
 
-				w.WriteHeader(http.StatusOK) // Or http.StatusCreated (201)
-				// FIX: Check error on Encode (Line 124)
+				w.WriteHeader(http.StatusOK) // Or http.StatusCreated (201).
 				err := json.NewEncoder(w).Encode(AddStatusPageResponse{
 					Msg: "Status page created",
-					// Optionally return the ID or slug if the real API does
+					// Optionally return the ID or slug if the real API does.
 				})
 				if err != nil {
 					fmt.Printf("ERROR encoding add status page response: %v\n", err)
@@ -161,15 +157,14 @@ func TestStatusPageOperations(t *testing.T) {
 
 			slug := parts[1]
 
-			// Handle special endpoints like /incident or /unpin
+			// Handle special endpoints like /incident or /unpin.
 			if len(parts) > 2 {
 				action := parts[2]
 				if action == "incident" {
 					if len(parts) > 3 && parts[3] == "unpin" {
-						// Unpin incident
-						if r.Method == http.MethodDelete { // Or POST/PUT depending on API
+						// Unpin incident.
+						if r.Method == http.MethodDelete { // Or POST/PUT depending on API.
 							w.WriteHeader(http.StatusOK)
-							// FIX: Check error on Encode (Line 146)
 							err := json.NewEncoder(w).Encode(UnpinIncidentResponse{
 								Detail: "Incident unpinned",
 							})
@@ -182,23 +177,22 @@ func TestStatusPageOperations(t *testing.T) {
 						http.Error(w, "Method not allowed for unpin", http.StatusMethodNotAllowed)
 						return
 					} else {
-						// Post incident
+						// Post incident.
 						if r.Method == http.MethodPost {
 							var request PostIncidentRequest
 							if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 								http.Error(w, "Bad request body for incident", http.StatusBadRequest)
 								return
 							}
-							w.WriteHeader(http.StatusOK) // Or 201 Created
-							// FIX: Check error on Encode (Line 161)
+							w.WriteHeader(http.StatusOK) // Or 201 Created.
 							err := json.NewEncoder(w).Encode(PostIncidentResponse{
-								// Simulate response, ID might come from DB in real API
-								ID:          123, // Example incident ID
+								// Simulate response, ID might come from DB in real API.
+								ID:          123, // Example incident ID.
 								Title:       request.Title,
 								Content:     request.Content,
 								Style:       request.Style,
 								CreatedDate: time.Now().Format(time.RFC3339),
-								Pin:         true, // Assuming default or based on request
+								Pin:         true, // Assuming default or based on request.
 							})
 							if err != nil {
 								fmt.Printf("ERROR encoding post incident response: %v\n", err)
@@ -210,14 +204,14 @@ func TestStatusPageOperations(t *testing.T) {
 						return
 					}
 				}
-				// Add other potential actions here if needed
+				// Add other potential actions here if needed.
 				http.Error(w, "Invalid action for status page", http.StatusBadRequest)
 				return
 			}
 
-			// If not an action endpoint, handle CRUD for the status page itself
+			// If not an action endpoint, handle CRUD for the status page itself.
 
-			// Find status page by slug
+			// Find status page by slug.
 			var spIndex = -1
 			for i, sp := range statusPages {
 				if sp.Slug == slug {
@@ -233,40 +227,35 @@ func TestStatusPageOperations(t *testing.T) {
 
 			switch r.Method {
 			case http.MethodGet:
-				// Get status page
+				// Get status page.
 				w.WriteHeader(http.StatusOK)
-				// FIX: Check error on Encode (Line 193)
 				err := json.NewEncoder(w).Encode(statusPages[spIndex])
 				if err != nil {
 					fmt.Printf("ERROR encoding single status page: %v\n", err)
 					http.Error(w, "failed to encode single status page", http.StatusInternalServerError)
 				}
 				return
-			case http.MethodPost: // Assuming POST for update based on original code, PUT/PATCH might be more standard
+			case http.MethodPost: // Assuming POST for update based on original code, PUT/PATCH might be more standard.
 				// Update status page
 				var request SaveStatusPageRequest
 				if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 					http.Error(w, "Bad request body for update", http.StatusBadRequest)
 					return
 				}
-
-				// Update fields (only update non-zero/non-empty values, similar to PATCH)
-				// Use pointer receiver if StatusPage is large, otherwise value receiver is fine
-				currentPage := statusPages[spIndex] // Get pointer to modify in place
+				currentPage := statusPages[spIndex] // Get pointer to modify in place.
 
 				if request.Title != "" {
 					currentPage.Title = request.Title
 				}
-				// ... (apply updates for all other fields similarly) ...
 				if request.Description != "" {
 					currentPage.Description = request.Description
 				}
 				if request.Theme != "" {
 					currentPage.Theme = request.Theme
 				}
-				currentPage.Published = request.Published // Assuming bool always provided
-				currentPage.ShowTags = request.ShowTags   // Assuming bool always provided
-				if request.DomainNameList != nil {        // Check if field exists in request
+				currentPage.Published = request.Published // Assuming bool always provided.
+				currentPage.ShowTags = request.ShowTags   // Assuming bool always provided.
+				if request.DomainNameList != nil {        // Check if field exists in request.
 					currentPage.DomainNameList = request.DomainNameList
 				}
 				if request.FooterText != "" {
@@ -281,13 +270,12 @@ func TestStatusPageOperations(t *testing.T) {
 				if request.Icon != "" {
 					currentPage.Icon = request.Icon
 				}
-				currentPage.ShowPoweredBy = request.ShowPoweredBy // Assuming bool always provided
-				if request.PublicGroupList != nil {               // Check if field exists in request
+				currentPage.ShowPoweredBy = request.ShowPoweredBy // Assuming bool always provided.
+				if request.PublicGroupList != nil {
 					currentPage.PublicGroupList = request.PublicGroupList
 				}
 
 				w.WriteHeader(http.StatusOK)
-				// FIX: Check error on Encode (Line 235)
 				err := json.NewEncoder(w).Encode(SaveStatusPageResponse{
 					Detail: "Status page updated",
 				})
@@ -297,10 +285,9 @@ func TestStatusPageOperations(t *testing.T) {
 				}
 				return
 			case http.MethodDelete:
-				// Delete status page
+				// Delete status page.
 				statusPages = append(statusPages[:spIndex], statusPages[spIndex+1:]...)
 				w.WriteHeader(http.StatusOK)
-				// FIX: Check error on Encode (Line 243)
 				err := json.NewEncoder(w).Encode(DeleteStatusPageResponse{
 					Detail: "Status page deleted",
 				})
@@ -315,12 +302,12 @@ func TestStatusPageOperations(t *testing.T) {
 			}
 		}
 
-		// If we get here, the path wasn't matched
+		// If we get here, the path wasn't matched.
 		http.NotFound(w, r)
 	}))
 	defer server.Close()
 
-	// Create client
+	// Create client.
 	config := &Config{
 		BaseURL:  server.URL,
 		Username: "testuser",
@@ -335,30 +322,25 @@ func TestStatusPageOperations(t *testing.T) {
 
 	ctx := context.Background()
 
-	// Test GetStatusPages
-	initialPages, err := client.GetStatusPages(ctx) // Renamed variable
+	// Test GetStatusPages.
+	initialPages, err := client.GetStatusPages(ctx)
 	if err != nil {
 		t.Fatalf("GetStatusPages failed: %v", err)
 	}
-	// Convert slice of pointers to slice of values for comparison if needed, or compare pointers carefully
-	// For simplicity, let's just check length initially assuming DeepEqual handles pointers correctly
-	// Note: DeepEqual might not work as expected if the mock server modifies the original slice directly.
-	// It's safer to compare lengths and key fields.
 	if len(initialPages) != len(statusPages) {
 		t.Errorf("GetStatusPages initial check: Expected %d status pages, got %d", len(statusPages), len(initialPages))
 	}
-	// Add more specific checks if DeepEqual is problematic
 
-	// Test GetStatusPage
+	// Test GetStatusPage.
 	page, err := client.GetStatusPage(ctx, "main-status")
 	if err != nil {
 		t.Fatalf("GetStatusPage failed for 'main-status': %v", err)
 	}
-	if page.Slug != "main-status" { // Basic check
+	if page.Slug != "main-status" { // Basic check.
 		t.Errorf("GetStatusPage returned unexpected slug: %+v", page)
 	}
 
-	// Test CreateStatusPage
+	// Test CreateStatusPage.
 	newPage := &AddStatusPageRequest{
 		Slug:  "new-status",
 		Title: "New Status Page",
@@ -368,10 +350,10 @@ func TestStatusPageOperations(t *testing.T) {
 	if err != nil {
 		t.Fatalf("CreateStatusPage failed: %v", err)
 	}
-	if !strings.Contains(createResult.Msg, "created") { // Check message content
+	if !strings.Contains(createResult.Msg, "created") { // Check message content.
 		t.Errorf("CreateStatusPage returned unexpected result message: %+v", createResult)
 	}
-	// Verify creation by trying to get the new page
+	// Verify creation by trying to get the new page.
 	createdPage, err := client.GetStatusPage(ctx, "new-status")
 	if err != nil {
 		t.Fatalf("GetStatusPage failed for newly created 'new-status': %v", err)
@@ -380,24 +362,23 @@ func TestStatusPageOperations(t *testing.T) {
 		t.Errorf("Newly created status page has wrong title: %+v", createdPage)
 	}
 
-	// Test UpdateStatusPage
-	updatePageSlug := "main-status" // Update existing page
+	// Test UpdateStatusPage.
+	updatePageSlug := "main-status"
 	updatePageData := &SaveStatusPageRequest{
 		Title:       "Updated Main Status Page",
 		Description: "Updated description for main status",
-		Theme:       "dark", // Change theme
-		Published:   true,   // Keep published
+		Theme:       "dark",
+		Published:   true,
 	}
 	updateResult, err := client.UpdateStatusPage(ctx, updatePageSlug, updatePageData)
 	if err != nil {
 		t.Fatalf("UpdateStatusPage failed for '%s': %v", updatePageSlug, err)
 	}
 
-	// --- Start Fix for Detail field type assertion ---
-	// Assert that the Detail field (which is interface{}) holds a string
+	// Assert that the Detail field (which is interface{}) holds a string.
 	detailStr, ok := updateResult.Detail.(string)
 	if !ok {
-		// If the underlying type isn't a string, fail the test
+		// If the underlying type isn't a string, fail the test.
 		t.Fatalf("UpdateStatusPage response field 'Detail' was not a string: type=%T, value=%+v",
 			updateResult.Detail, updateResult)
 	}
@@ -405,9 +386,8 @@ func TestStatusPageOperations(t *testing.T) {
 	if !strings.Contains(detailStr, "updated") {
 		t.Errorf("UpdateStatusPage returned unexpected result detail string: '%s'", detailStr)
 	}
-	// --- End Fix ---
 
-	// Verify update by getting the page again
+	// Verify update by getting the page again.
 	updatedPage, err := client.GetStatusPage(ctx, updatePageSlug)
 	if err != nil {
 		t.Fatalf("GetStatusPage failed for updated '%s': %v", updatePageSlug, err)
@@ -416,8 +396,8 @@ func TestStatusPageOperations(t *testing.T) {
 		t.Errorf("UpdateStatusPage did not apply changes correctly: %+v", updatedPage)
 	}
 
-	// Test PostIncident
-	incidentSlug := "main-status" // Post to existing page
+	// Test PostIncident.
+	incidentSlug := "main-status" // Post to existing page.
 	incidentData := &PostIncidentRequest{
 		Title:   "Test Incident",
 		Content: "There is a problem with the service",
@@ -427,12 +407,12 @@ func TestStatusPageOperations(t *testing.T) {
 	if err != nil {
 		t.Fatalf("PostIncident failed for '%s': %v", incidentSlug, err)
 	}
-	if incidentResult.Title != "Test Incident" { // Basic check on response
+	if incidentResult.Title != "Test Incident" { // Basic check on response.
 		t.Errorf("PostIncident returned unexpected title in result: %+v", incidentResult)
 	}
 
-	// Test UnpinIncident
-	unpinSlug := "main-status" // Unpin from existing page
+	// Test UnpinIncident.
+	unpinSlug := "main-status" // Unpin from existing page.
 	unpinResult, err := client.UnpinIncident(ctx, unpinSlug)
 	if err != nil {
 		t.Fatalf("UnpinIncident failed for '%s': %v", unpinSlug, err)
@@ -441,8 +421,8 @@ func TestStatusPageOperations(t *testing.T) {
 		t.Errorf("UnpinIncident returned unexpected result detail: %+v", unpinResult)
 	}
 
-	// Test DeleteStatusPage
-	deleteSlug := "new-status" // Delete the one we created
+	// Test DeleteStatusPage.
+	deleteSlug := "new-status" // Delete the one we created.
 	deleteResult, err := client.DeleteStatusPage(ctx, deleteSlug)
 	if err != nil {
 		t.Fatalf("DeleteStatusPage failed for '%s': %v", deleteSlug, err)
@@ -450,7 +430,7 @@ func TestStatusPageOperations(t *testing.T) {
 	if !strings.Contains(deleteResult.Detail, "deleted") {
 		t.Errorf("DeleteStatusPage returned unexpected result detail: %+v", deleteResult)
 	}
-	// Verify deletion
+	// Verify deletion.
 	_, err = client.GetStatusPage(ctx, deleteSlug)
 	if err == nil {
 		t.Errorf("GetStatusPage should have failed for deleted slug '%s', but succeeded", deleteSlug)
@@ -460,4 +440,3 @@ func TestStatusPageOperations(t *testing.T) {
 
 }
 
-// NOTE: Period added for godot linter.

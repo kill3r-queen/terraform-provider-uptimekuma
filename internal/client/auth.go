@@ -64,12 +64,11 @@ func (a *AuthClient) refreshToken(ctx context.Context) (string, error) {
 	a.mutex.Lock()
 	defer a.mutex.Unlock()
 
-	// Double check that we still need a token after acquiring the lock
 	if a.token != "" && time.Now().Before(a.tokenExpiry) {
 		return a.token, nil
 	}
 
-	// Prepare the authentication request
+	// Prepare the authentication request.
 	data := url.Values{}
 	data.Set("username", a.username)
 	data.Set("password", a.password)
@@ -83,7 +82,7 @@ func (a *AuthClient) refreshToken(ctx context.Context) (string, error) {
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Accept", "application/json")
 
-	// Execute the request
+	// Execute the request.
 	resp, err := a.httpClient.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("failed to execute auth request: %w", err)
@@ -94,7 +93,7 @@ func (a *AuthClient) refreshToken(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("authentication failed with status code: %d", resp.StatusCode)
 	}
 
-	// Parse the token response
+	// Parse the token response.
 	var tokenResp TokenResponse
 	if err := json.NewDecoder(resp.Body).Decode(&tokenResp); err != nil {
 		return "", fmt.Errorf("failed to decode token response: %w", err)
@@ -104,10 +103,10 @@ func (a *AuthClient) refreshToken(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("received empty access token")
 	}
 
-	// Store the token and set expiry (assuming 1 hour validity, adjust as needed)
+	// Store the token and set expiry (assuming 1 hour validity, adjust as needed).
 	a.token = tokenResp.AccessToken
-	// Set expiry slightly shorter than actual to avoid race conditions
-	a.tokenExpiry = time.Now().Add(59 * time.Minute) // Example: 59 minutes
+	// Set expiry slightly shorter than actual to avoid race conditions.
+	a.tokenExpiry = time.Now().Add(59 * time.Minute) // Example: 59 minutes.
 
 	return a.token, nil
 }
@@ -127,39 +126,36 @@ func (a *AuthClient) AddAuthHeader(ctx context.Context, req *http.Request) error
 func (a *AuthClient) AuthenticatedClient() *http.Client {
 	return &http.Client{
 		Transport: &authTransport{
-			base:       a.httpClient.Transport, // Use the base client's transport
+			base:       a.httpClient.Transport, // Use the base client's transport.
 			authClient: a,
 		},
-		Timeout: a.httpClient.Timeout, // Inherit timeout
+		Timeout: a.httpClient.Timeout, // Inherit timeout.
 	}
 }
 
 // authTransport is a custom http.RoundTripper that adds authentication headers.
 type authTransport struct {
-	base       http.RoundTripper // The underlying transport (e.g., http.DefaultTransport)
+	base       http.RoundTripper // The underlying transport (e.g., http.DefaultTransport).
 	authClient *AuthClient
 }
 
 // RoundTrip implements the http.RoundTripper interface.
 func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	// Clone the request to avoid modifying the original request context
+	// Clone the request to avoid modifying the original request context.
 	req2 := req.Clone(req.Context())
 
 	// Add authentication header
 	if err := t.authClient.AddAuthHeader(req.Context(), req2); err != nil {
-		// Handle token fetch error before sending the request
+		// Handle token fetch error before sending the request.
 		return nil, fmt.Errorf("failed to add auth header: %w", err)
 	}
 
-	// Use the base transport or default if none provided
+	// Use the base transport or default if none provided.
 	base := t.base
 	if base == nil {
 		base = http.DefaultTransport
 	}
 
-	// Perform the actual request using the base transport
+	// Perform the actual request using the base transport.
 	return base.RoundTrip(req2)
 }
-
-// Note: Line 146 formatting error mentioned previously (gofmt) should also be fixed
-// by running `gofmt -w .` or ensuring there are no stray characters/lines.

@@ -1,5 +1,5 @@
 // Copyright (c) HashiCorp, Inc.
-// SPDX-License-Identifier: MPL-2.0
+// SPDX-License-Identifier: MPL-2.0.
 
 package provider
 
@@ -190,7 +190,7 @@ func (r *MonitorResource) Configure(ctx context.Context, req resource.ConfigureR
 func (r *MonitorResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data MonitorResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan data into the model.
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -210,7 +210,7 @@ func (r *MonitorResource) Create(ctx context.Context, req resource.CreateRequest
 		IgnoreTLS:      data.IgnoreTLS.ValueBool(),
 	}
 
-	// Set optional fields
+	// Set optional fields.
 	if !data.URL.IsNull() {
 		monitor.URL = data.URL.ValueString()
 	}
@@ -255,7 +255,7 @@ func (r *MonitorResource) Create(ctx context.Context, req resource.CreateRequest
 		monitor.Keyword = data.Keyword.ValueString()
 	}
 
-	// Create the monitor
+	// Create the monitor.
 	tflog.Info(ctx, "Creating monitor", map[string]interface{}{
 		"name": monitor.Name,
 		"type": monitor.Type,
@@ -267,17 +267,17 @@ func (r *MonitorResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	// Update Terraform state
+	// Update Terraform state.
 	data.ID = types.Int64Value(int64(createdMonitor.ID))
 
-	// Save data into Terraform state
+	// Save data into Terraform state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *MonitorResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
 	var data MonitorResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state data into the model.
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -286,7 +286,7 @@ func (r *MonitorResource) Read(ctx context.Context, req resource.ReadRequest, re
 
 	monitorID := int(data.ID.ValueInt64())
 
-	// Read the monitor from the API
+	// Read the monitor from the API.
 	monitor, err := r.client.GetMonitor(ctx, monitorID)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -296,7 +296,7 @@ func (r *MonitorResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	// Update the data model
+	// Update the data model.
 	data.ID = types.Int64Value(int64(monitor.ID))
 	data.Type = types.StringValue(string(monitor.Type))
 	data.Name = types.StringValue(monitor.Name)
@@ -319,14 +319,14 @@ func (r *MonitorResource) Read(ctx context.Context, req resource.ReadRequest, re
 	data.BasicAuthPass = types.StringValue(monitor.BasicAuthPass)
 	data.Keyword = types.StringValue(monitor.Keyword)
 
-	// Save updated data into Terraform state
+	// Save updated data into Terraform state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *MonitorResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
 	var data MonitorResourceModel
 
-	// Read Terraform plan data into the model
+	// Read Terraform plan data into the model.
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -335,7 +335,7 @@ func (r *MonitorResource) Update(ctx context.Context, req resource.UpdateRequest
 
 	monitorID := int(data.ID.ValueInt64())
 
-	// Prepare the API request
+	// Prepare the API request.
 	monitor := &client.Monitor{
 		Type:           client.MonitorType(data.Type.ValueString()),
 		Name:           data.Name.ValueString(),
@@ -348,7 +348,7 @@ func (r *MonitorResource) Update(ctx context.Context, req resource.UpdateRequest
 		IgnoreTLS:      data.IgnoreTLS.ValueBool(),
 	}
 
-	// Set optional fields
+	// Set optional fields.
 	if !data.URL.IsNull() {
 		monitor.URL = data.URL.ValueString()
 	}
@@ -393,7 +393,7 @@ func (r *MonitorResource) Update(ctx context.Context, req resource.UpdateRequest
 		monitor.Keyword = data.Keyword.ValueString()
 	}
 
-	// Update the monitor
+	// Update the monitor.
 	tflog.Info(ctx, "Updating monitor", map[string]interface{}{
 		"id":   monitorID,
 		"name": monitor.Name,
@@ -405,14 +405,14 @@ func (r *MonitorResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	// Save updated data into Terraform state
+	// Save updated data into Terraform state.
 	resp.Diagnostics.Append(resp.State.Set(ctx, &data)...)
 }
 
 func (r *MonitorResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
 	var data MonitorResourceModel
 
-	// Read Terraform prior state data into the model
+	// Read Terraform prior state data into the model.
 	resp.Diagnostics.Append(req.State.Get(ctx, &data)...)
 
 	if resp.Diagnostics.HasError() {
@@ -421,7 +421,7 @@ func (r *MonitorResource) Delete(ctx context.Context, req resource.DeleteRequest
 
 	monitorID := int(data.ID.ValueInt64())
 
-	// Delete the monitor
+	// Delete the monitor.
 	tflog.Info(ctx, "Deleting monitor", map[string]interface{}{
 		"id": monitorID,
 	})
@@ -434,7 +434,7 @@ func (r *MonitorResource) Delete(ctx context.Context, req resource.DeleteRequest
 }
 
 func (r *MonitorResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	// Convert import ID (string) to int
+	// Convert import ID (string) to int.
 	id, err := strconv.Atoi(req.ID)
 	if err != nil {
 		resp.Diagnostics.AddError(
@@ -444,6 +444,6 @@ func (r *MonitorResource) ImportState(ctx context.Context, req resource.ImportSt
 		return
 	}
 
-	// Set the ID in the state
+	// Set the ID in the state.
 	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), id)...)
 }

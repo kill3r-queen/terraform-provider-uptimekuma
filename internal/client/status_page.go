@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-// PublicGroup represents a group of monitors on a status page
+// PublicGroup represents a group of monitors on a status page.
 type PublicGroup struct {
 	ID          int    `json:"id,omitempty"`
 	Name        string `json:"name"`
@@ -15,7 +15,7 @@ type PublicGroup struct {
 	MonitorList []int  `json:"monitorList"`
 }
 
-// StatusPage represents an Uptime Kuma status page
+// StatusPage represents an Uptime Kuma status page.
 type StatusPage struct {
 	ID                int           `json:"id,omitempty"`
 	Slug              string        `json:"slug"`
@@ -33,24 +33,24 @@ type StatusPage struct {
 	PublicGroupList   []PublicGroup `json:"publicGroupList,omitempty"`
 }
 
-// StatusPageList represents a list of status pages
+// StatusPageList represents a list of status pages.
 type StatusPageList struct {
 	StatusPages []StatusPage `json:"statuspages"`
 }
 
-// AddStatusPageRequest represents the request to create a status page
+// AddStatusPageRequest represents the request to create a status page.
 type AddStatusPageRequest struct {
 	Slug  string `json:"slug"`
 	Title string `json:"title"`
 	Msg   string `json:"msg,omitempty"`
 }
 
-// AddStatusPageResponse represents the response from creating a status page
+// AddStatusPageResponse represents the response from creating a status page.
 type AddStatusPageResponse struct {
 	Msg string `json:"msg"`
 }
 
-// SaveStatusPageRequest represents the request to update a status page
+// SaveStatusPageRequest represents the request to update a status page.
 type SaveStatusPageRequest struct {
 	Title             string        `json:"title,omitempty"`
 	Description       string        `json:"description,omitempty"`
@@ -66,17 +66,17 @@ type SaveStatusPageRequest struct {
 	PublicGroupList   []PublicGroup `json:"publicGroupList,omitempty"`
 }
 
-// SaveStatusPageResponse represents the response from updating a status page
+// SaveStatusPageResponse represents the response from updating a status page.
 type SaveStatusPageResponse struct {
 	Detail interface{} `json:"detail"`
 }
 
-// DeleteStatusPageResponse represents the response from deleting a status page
+// DeleteStatusPageResponse represents the response from deleting a status page.
 type DeleteStatusPageResponse struct {
 	Detail string `json:"detail"`
 }
 
-// GetStatusPages retrieves all status pages
+// GetStatusPages retrieves all status pages.
 func (c *Client) GetStatusPages(ctx context.Context) ([]StatusPage, error) {
 	var result StatusPageList
 	if err := c.Get(ctx, "/status-pages", &result); err != nil {
@@ -85,7 +85,7 @@ func (c *Client) GetStatusPages(ctx context.Context) ([]StatusPage, error) {
 	return result.StatusPages, nil
 }
 
-// GetStatusPage retrieves a specific status page by slug
+// GetStatusPage retrieves a specific status page by slug.
 func (c *Client) GetStatusPage(ctx context.Context, slug string) (*StatusPage, error) {
 	var result StatusPage
 	path := fmt.Sprintf("/status-pages/%s", slug)
@@ -95,7 +95,7 @@ func (c *Client) GetStatusPage(ctx context.Context, slug string) (*StatusPage, e
 	return &result, nil
 }
 
-// CreateStatusPage creates a new status page
+// CreateStatusPage creates a new status page.
 func (c *Client) CreateStatusPage(ctx context.Context, request *AddStatusPageRequest) (*AddStatusPageResponse, error) {
 	data, err := json.Marshal(request)
 	if err != nil {
@@ -109,7 +109,7 @@ func (c *Client) CreateStatusPage(ctx context.Context, request *AddStatusPageReq
 	return &result, nil
 }
 
-// UpdateStatusPage updates an existing status page
+// UpdateStatusPage updates an existing status page.
 func (c *Client) UpdateStatusPage(ctx context.Context, slug string, request *SaveStatusPageRequest) (*SaveStatusPageResponse, error) {
 	data, err := json.Marshal(request)
 	if err != nil {
@@ -124,7 +124,7 @@ func (c *Client) UpdateStatusPage(ctx context.Context, slug string, request *Sav
 	return &result, nil
 }
 
-// DeleteStatusPage deletes a status page
+// DeleteStatusPage deletes a status page.
 func (c *Client) DeleteStatusPage(ctx context.Context, slug string) (*DeleteStatusPageResponse, error) {
 	var result DeleteStatusPageResponse
 	path := fmt.Sprintf("/status-pages/%s", slug)
@@ -134,14 +134,14 @@ func (c *Client) DeleteStatusPage(ctx context.Context, slug string) (*DeleteStat
 	return &result, nil
 }
 
-// PostIncidentRequest represents a request to post an incident to a status page
+// PostIncidentRequest represents a request to post an incident to a status page.
 type PostIncidentRequest struct {
 	Title   string `json:"title"`
 	Content string `json:"content"`
-	Style   string `json:"style,omitempty"` // primary, info, warning, danger, light, dark
+	Style   string `json:"style,omitempty"`
 }
 
-// PostIncidentResponse represents the response from posting an incident
+// PostIncidentResponse represents the response from posting an incident.
 type PostIncidentResponse struct {
 	ID          int    `json:"id"`
 	Title       string `json:"title"`
@@ -151,12 +151,12 @@ type PostIncidentResponse struct {
 	Pin         bool   `json:"pin"`
 }
 
-// UnpinIncidentResponse represents the response from unpinning an incident
+// UnpinIncidentResponse represents the response from unpinning an incident.
 type UnpinIncidentResponse struct {
 	Detail string `json:"detail"`
 }
 
-// PostIncident posts an incident to a status page
+// PostIncident posts an incident to a status page.
 func (c *Client) PostIncident(ctx context.Context, slug string, request *PostIncidentRequest) (*PostIncidentResponse, error) {
 	data, err := json.Marshal(request)
 	if err != nil {
@@ -171,7 +171,7 @@ func (c *Client) PostIncident(ctx context.Context, slug string, request *PostInc
 	return &result, nil
 }
 
-// UnpinIncident unpins an incident from a status page
+// UnpinIncident unpins an incident from a status page.
 func (c *Client) UnpinIncident(ctx context.Context, slug string) (*UnpinIncidentResponse, error) {
 	var result UnpinIncidentResponse
 	path := fmt.Sprintf("/status-pages/%s/incident/unpin", slug)
@@ -180,5 +180,3 @@ func (c *Client) UnpinIncident(ctx context.Context, slug string) (*UnpinIncident
 	}
 	return &result, nil
 }
-
-// NOTE: Period added for godot linter.
