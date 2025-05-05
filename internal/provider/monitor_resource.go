@@ -64,105 +64,113 @@ func (r *MonitorResource) Metadata(ctx context.Context, req resource.MetadataReq
 
 func (r *MonitorResource) Schema(ctx context.Context, req resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{
-		MarkdownDescription: "Uptime Kuma Monitor resource",
+		// ADD THIS: Top-level description for the resource documentation.
+		MarkdownDescription: "Manages an Uptime Kuma monitor, allowing creation, modification, and deletion of various monitor types.",
 
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Computed:            true,
-				MarkdownDescription: "Monitor identifier",
+				MarkdownDescription: "Monitor identifier.", // Added period
 				PlanModifiers: []planmodifier.Int64{
 					int64planmodifier.UseStateForUnknown(),
 				},
 			},
 			"type": schema.StringAttribute{
-				MarkdownDescription: "Monitor type (http, ping, port, etc.)",
+				MarkdownDescription: "Monitor type (http, ping, port, etc.).", // Added period
 				Required:            true,
 			},
 			"name": schema.StringAttribute{
-				MarkdownDescription: "Monitor name",
+				MarkdownDescription: "Monitor name.", // Added period
 				Required:            true,
 			},
 			"description": schema.StringAttribute{
-				MarkdownDescription: "Monitor description",
-				Required:            true,
+				MarkdownDescription: "Monitor description.", // Added period
+				// Optional is likely more appropriate than Required for description
+				Optional:            true,
 			},
 			"url": schema.StringAttribute{
-				MarkdownDescription: "URL to monitor (required for http, keyword monitors)",
+				MarkdownDescription: "URL to monitor (required for http, keyword monitors).", // Added period
 				Optional:            true,
 			},
 			"method": schema.StringAttribute{
-				MarkdownDescription: "HTTP method (GET, POST, etc.) for http monitors",
+				MarkdownDescription: "HTTP method (GET, POST, etc.) for http monitors.", // Added period
 				Optional:            true,
 			},
 			"hostname": schema.StringAttribute{
-				MarkdownDescription: "Hostname for ping, port, etc. monitors",
+				MarkdownDescription: "Hostname for ping, port, etc. monitors.", // Added period
 				Optional:            true,
 			},
 			"port": schema.Int64Attribute{
-				MarkdownDescription: "Port number for port monitors",
+				MarkdownDescription: "Port number for port monitors.", // Added period
 				Optional:            true,
 			},
 			"interval": schema.Int64Attribute{
-				MarkdownDescription: "Check interval in seconds",
+				MarkdownDescription: "Check interval in seconds.", // Added period
 				Optional:            true,
 				Computed:            true,
 				Default:             int64default.StaticInt64(60),
 			},
 			"retry_interval": schema.Int64Attribute{
-				MarkdownDescription: "Retry interval in seconds",
+				MarkdownDescription: "Retry interval in seconds.", // Added period
 				Optional:            true,
 				Computed:            true,
 				Default:             int64default.StaticInt64(60),
 			},
 			"resend_interval": schema.Int64Attribute{
-				MarkdownDescription: "Notification resend interval in seconds",
+				MarkdownDescription: "Notification resend interval in seconds.", // Added period
 				Optional:            true,
 				Computed:            true,
 				Default:             int64default.StaticInt64(0),
 			},
 			"max_retries": schema.Int64Attribute{
-				MarkdownDescription: "Maximum number of retries",
+				MarkdownDescription: "Maximum number of retries.", // Added period
 				Optional:            true,
 				Computed:            true,
 				Default:             int64default.StaticInt64(0),
 			},
 			"upside_down": schema.BoolAttribute{
-				MarkdownDescription: "Invert status (treat DOWN as UP and vice versa)",
+				MarkdownDescription: "Invert status (treat DOWN as UP and vice versa).", // Added period
 				Optional:            true,
+				// Add Computed: true and Default: booldefault.StaticBool(false) if desired
 			},
 			"ignore_tls": schema.BoolAttribute{
-				MarkdownDescription: "Ignore TLS/SSL errors",
+				MarkdownDescription: "Ignore TLS/SSL errors.", // Added period
 				Optional:            true,
+				// Add Computed: true and Default: booldefault.StaticBool(false) if desired
 			},
 			"max_redirects": schema.Int64Attribute{
-				MarkdownDescription: "Maximum number of redirects to follow",
+				MarkdownDescription: "Maximum number of redirects to follow.", // Added period
 				Optional:            true,
+				// Add Computed: true and Default: int64default.StaticInt64(10) if desired
 			},
 			"body": schema.StringAttribute{
-				MarkdownDescription: "Request body for http monitors",
+				MarkdownDescription: "Request body for http monitors.", // Added period
 				Optional:            true,
 			},
 			"headers": schema.StringAttribute{
-				MarkdownDescription: "Request headers for http monitors (JSON format)",
+				MarkdownDescription: "Request headers for http monitors (JSON format).", // Added period
 				Optional:            true,
 			},
 			"auth_method": schema.StringAttribute{
-				MarkdownDescription: "Authentication method (basic, ntlm, mtls)",
+				MarkdownDescription: "Authentication method (basic, ntlm, mtls).", // Added period
 				Optional:            true,
 			},
 			"basic_auth_user": schema.StringAttribute{
-				MarkdownDescription: "Basic auth username",
+				MarkdownDescription: "Basic auth username.", // Added period
 				Optional:            true,
 			},
 			"basic_auth_pass": schema.StringAttribute{
-				MarkdownDescription: "Basic auth password",
+				MarkdownDescription: "Basic auth password.", // Added period
 				Optional:            true,
 				Sensitive:           true,
 			},
 			"keyword": schema.StringAttribute{
-				MarkdownDescription: "Keyword to search for in response",
+				MarkdownDescription: "Keyword to search for in response.", // Added period
 				Optional:            true,
 			},
+			// NOTE: Consider adding Computed: true and Default values for optional fields
+			// where the API provides defaults if not specified by the user.
+			// Also added periods to all descriptions proactively for 'godot'.
 		},
 	}
 }
