@@ -70,17 +70,17 @@ func (r *MonitorResource) Schema(ctx context.Context, req resource.SchemaRequest
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
 				Computed:            true,
-				MarkdownDescription: "Monitor identifier.", 
+				MarkdownDescription: "Monitor identifier.",
 				PlanModifiers: []planmodifier.Int64{
 					int64planmodifier.UseStateForUnknown(),
 				},
 			},
 			"type": schema.StringAttribute{
-				MarkdownDescription: "Monitor type (http, ping, port, etc.).", 
+				MarkdownDescription: "Monitor type (http, ping, port, etc.).",
 				Required:            true,
 			},
 			"name": schema.StringAttribute{
-				MarkdownDescription: "Monitor name.", 
+				MarkdownDescription: "Monitor name.",
 				Required:            true,
 			},
 			"description": schema.StringAttribute{
@@ -88,35 +88,35 @@ func (r *MonitorResource) Schema(ctx context.Context, req resource.SchemaRequest
 				Optional:            true,
 			},
 			"url": schema.StringAttribute{
-				MarkdownDescription: "URL to monitor (required for http, keyword monitors).", 
+				MarkdownDescription: "URL to monitor (required for http, keyword monitors).",
 				Optional:            true,
 			},
 			"method": schema.StringAttribute{
-				MarkdownDescription: "HTTP method (GET, POST, etc.) for http monitors.", 
+				MarkdownDescription: "HTTP method (GET, POST, etc.) for http monitors.",
 				Optional:            true,
 			},
 			"hostname": schema.StringAttribute{
-				MarkdownDescription: "Hostname for ping, port, etc. monitors.", 
+				MarkdownDescription: "Hostname for ping, port, etc. monitors.",
 				Optional:            true,
 			},
 			"port": schema.Int64Attribute{
-				MarkdownDescription: "Port number for port monitors.", 
+				MarkdownDescription: "Port number for port monitors.",
 				Optional:            true,
 			},
 			"interval": schema.Int64Attribute{
-				MarkdownDescription: "Check interval in seconds.", 
+				MarkdownDescription: "Check interval in seconds.",
 				Optional:            true,
 				Computed:            true,
 				Default:             int64default.StaticInt64(60),
 			},
 			"retry_interval": schema.Int64Attribute{
-				MarkdownDescription: "Retry interval in seconds.", 
+				MarkdownDescription: "Retry interval in seconds.",
 				Optional:            true,
 				Computed:            true,
 				Default:             int64default.StaticInt64(60),
 			},
 			"resend_interval": schema.Int64Attribute{
-				MarkdownDescription: "Notification resend interval in seconds.", 
+				MarkdownDescription: "Notification resend interval in seconds.",
 				Optional:            true,
 				Computed:            true,
 				Default:             int64default.StaticInt64(0),
@@ -138,10 +138,9 @@ func (r *MonitorResource) Schema(ctx context.Context, req resource.SchemaRequest
 			"max_redirects": schema.Int64Attribute{
 				MarkdownDescription: "Maximum number of redirects to follow.",
 				Optional:            true,
-
 			},
 			"body": schema.StringAttribute{
-				MarkdownDescription: "Request body for http monitors.", 
+				MarkdownDescription: "Request body for http monitors.",
 				Optional:            true,
 			},
 			"headers": schema.StringAttribute{
