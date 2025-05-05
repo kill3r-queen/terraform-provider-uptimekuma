@@ -118,10 +118,10 @@ func TestMonitorOperations(t *testing.T) {
 
 			// Use a map to handle action endpoints cleanly
 			actionEndpoints := map[string]bool{
-				"pause": true,
+				"pause":  true,
 				"resume": true,
-				"beats": true,
-				"tag": true,
+				"beats":  true,
+				"tag":    true,
 			}
 
 			isAction := false
@@ -129,7 +129,6 @@ func TestMonitorOperations(t *testing.T) {
 				isAction = true
 				// Handle specific action endpoints if needed here, or within the main switch below
 			}
-
 
 			id, err := strconv.Atoi(idStr)
 			if err != nil {
@@ -363,16 +362,44 @@ func TestMonitorOperations(t *testing.T) {
 
 	// Test GetMonitorBeats
 	beatsMonitorID := 1 // Use an ID known to exist
-	beats, err := client.GetMonitorBeats(ctx, beatsMonitorID, 1.0) // Use a duration like 1.0 hours
+	// Rename the result variable to avoid confusion
+	beatsResult, err := client.GetMonitorBeats(ctx, beatsMonitorID, 1.0) // Use a duration like 1.0 hours
 	if err != nil {
 		t.Fatalf("GetMonitorBeats failed for ID %d: %v", beatsMonitorID, err)
 	}
-	if len(beats) == 0 { // Basic check that beats were returned
-		t.Errorf("GetMonitorBeats returned no beats for ID %d", beatsMonitorID)
-	} else {
-		fmt.Printf("DEBUG: Beats for monitor %d: %+v\n", beatsMonitorID, beats) // Debug output
+
+	// --- Start Fix for typecheck error ---
+
+	// 1. Assert the result is a map
+	beatsMap, ok := beatsResult.(map[string]interface{})
+	if !ok {
+		// If the type assertion fails, the API returned something unexpected
+		t.Fatalf("GetMonitorBeats returned unexpected type: expected map[string]interface{}, got %T", beatsResult)
 	}
 
+	// 2. Extract the 'beats' key which should contain the slice
+	beatsSliceRaw, ok := beatsMap["beats"]
+	if !ok {
+		// If the key doesn't exist, the API response structure is wrong
+		t.Fatalf("GetMonitorBeats response missing 'beats' key: %+v", beatsMap)
+	}
+
+	// 3. Assert the extracted value is a slice (likely []interface{} or []map[string]interface{})
+	//    Adjust []interface{} if your client decodes into a specific struct slice like []Beat
+	beatsSlice, ok := beatsSliceRaw.([]interface{})
+	if !ok {
+		// If this fails, the 'beats' key contained something other than a slice
+		t.Fatalf("GetMonitorBeats 'beats' key contains unexpected type: expected []interface{}, got %T", beatsSliceRaw)
+	}
+
+	// 4. Now apply len() to the actual slice (replaces original line 370 check)
+	if len(beatsSlice) == 0 {
+		t.Errorf("GetMonitorBeats returned no beats in the 'beats' slice for ID %d", beatsMonitorID)
+	} else {
+		// You can now work with beatsSlice
+		fmt.Printf("DEBUG: Beats slice for monitor %d: %+v\n", beatsMonitorID, beatsSlice)
+	}
+	// --- End Fix ---
 
 	// Test DeleteMonitor
 	deleteTargetID := 1 // Use an ID known to exist
