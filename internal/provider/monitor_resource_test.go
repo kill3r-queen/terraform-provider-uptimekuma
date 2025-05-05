@@ -78,9 +78,8 @@ func TestAccMonitorResource(t *testing.T) {
 	})
 }
 
-
 func testAccMonitorResourceConfig(name, monitorType, url, description string) string {
-    return fmt.Sprintf(`
+	return fmt.Sprintf(`
 provider "uptimekuma" {
   base_url = "%s"
   username = "%s"
@@ -97,55 +96,55 @@ resource "uptimekuma_monitor" "test" {
   retry_interval  = 30
 }
 `,
-        os.Getenv("UPTIMEKUMA_BASE_URL"),
-        os.Getenv("UPTIMEKUMA_USERNAME"),
-        os.Getenv("UPTIMEKUMA_PASSWORD"),
-        name, monitorType, url, description)
+		os.Getenv("UPTIMEKUMA_BASE_URL"),
+		os.Getenv("UPTIMEKUMA_USERNAME"),
+		os.Getenv("UPTIMEKUMA_PASSWORD"),
+		name, monitorType, url, description)
 }
 
 func TestAccPingMonitorResource(t *testing.T) {
-    // CHANGE HERE: Define a description for the ping test
-    pingDescription := "Test Ping Description"
+	// CHANGE HERE: Define a description for the ping test
+	pingDescription := "Test Ping Description"
 
-    resource.Test(t, resource.TestCase{
-        PreCheck:                 func() { testAccPreCheck(t) },
-        ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-        Steps: []resource.TestStep{
-            {
-                // CHANGE HERE: Pass 'pingDescription' as the third argument (line 112 in original error)
-                Config: testAccPingMonitorResourceConfig("Ping Monitor", "example.com", pingDescription),
-                ConfigStateChecks: []statecheck.StateCheck{
-                    statecheck.ExpectKnownValue(
-                        "uptimekuma_monitor.ping_test",
-                        tfjsonpath.New("name"),
-                        knownvalue.StringExact("Ping Monitor"),
-                    ),
-                    statecheck.ExpectKnownValue(
-                        "uptimekuma_monitor.ping_test",
-                        tfjsonpath.New("type"),
-                        knownvalue.StringExact("ping"),
-                    ),
-                    statecheck.ExpectKnownValue(
-                        "uptimekuma_monitor.ping_test",
-                        tfjsonpath.New("hostname"),
-                        knownvalue.StringExact("example.com"),
-                    ),
-                    // CHANGE HERE: Add state check for description
-                    statecheck.ExpectKnownValue(
-                        "uptimekuma_monitor.ping_test",
-                        tfjsonpath.New("description"),
-                        knownvalue.StringExact(pingDescription),
-                    ),
-                },
-            },
-        },
-    })
+	resource.Test(t, resource.TestCase{
+		PreCheck:                 func() { testAccPreCheck(t) },
+		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+		Steps: []resource.TestStep{
+			{
+				// CHANGE HERE: Pass 'pingDescription' as the third argument (line 112 in original error)
+				Config: testAccPingMonitorResourceConfig("Ping Monitor", "example.com", pingDescription),
+				ConfigStateChecks: []statecheck.StateCheck{
+					statecheck.ExpectKnownValue(
+						"uptimekuma_monitor.ping_test",
+						tfjsonpath.New("name"),
+						knownvalue.StringExact("Ping Monitor"),
+					),
+					statecheck.ExpectKnownValue(
+						"uptimekuma_monitor.ping_test",
+						tfjsonpath.New("type"),
+						knownvalue.StringExact("ping"),
+					),
+					statecheck.ExpectKnownValue(
+						"uptimekuma_monitor.ping_test",
+						tfjsonpath.New("hostname"),
+						knownvalue.StringExact("example.com"),
+					),
+					// CHANGE HERE: Add state check for description
+					statecheck.ExpectKnownValue(
+						"uptimekuma_monitor.ping_test",
+						tfjsonpath.New("description"),
+						knownvalue.StringExact(pingDescription),
+					),
+				},
+			},
+		},
+	})
 }
 
 // Keep the testAccPingMonitorResourceConfig function definition as you already had it
 // (it correctly accepts 3 arguments):
 func testAccPingMonitorResourceConfig(name, hostname, description string) string {
-    return fmt.Sprintf(`
+	return fmt.Sprintf(`
 provider "uptimekuma" {
   base_url = "%s"
   username = "%s"
@@ -161,8 +160,8 @@ resource "uptimekuma_monitor" "ping_test" {
   max_retries     = 3
 }
 `,
-        os.Getenv("UPTIMEKUMA_BASE_URL"),
-        os.Getenv("UPTIMEKUMA_USERNAME"),
-        os.Getenv("UPTIMEKUMA_PASSWORD"),
-        name, hostname, description)
+		os.Getenv("UPTIMEKUMA_BASE_URL"),
+		os.Getenv("UPTIMEKUMA_USERNAME"),
+		os.Getenv("UPTIMEKUMA_PASSWORD"),
+		name, hostname, description)
 }

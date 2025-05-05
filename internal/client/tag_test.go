@@ -178,12 +178,12 @@ func TestTagOperations(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GetTags failed after deletion: %v", err)
 	}
-	
+
 	// Should have 2 tags now (ID 1 and ID 3, ID 2 was deleted)
 	if len(retrievedTags) != 2 {
 		t.Errorf("Expected 2 tags after deletion, got %d", len(retrievedTags))
 	}
-	
+
 	// Verify the deleted tag is not in the list
 	for _, tag := range retrievedTags {
 		if tag.ID == 2 {

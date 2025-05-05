@@ -143,17 +143,17 @@ type authTransport struct {
 func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	// Clone the request to avoid modifying the original
 	req2 := req.Clone(req.Context())
-	
+
 	// Add authentication header
 	if err := t.authClient.AddAuthHeader(req.Context(), req2); err != nil {
 		return nil, err
 	}
-	
+
 	// Use the base transport or default if none provided
 	base := t.base
 	if base == nil {
 		base = http.DefaultTransport
 	}
-	
+
 	return base.RoundTrip(req2)
 }

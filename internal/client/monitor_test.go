@@ -98,7 +98,7 @@ func TestMonitorOperations(t *testing.T) {
 			idStr := parts[2]
 			var id int
 			var err error
-			
+
 			if strings.Contains(idStr, "?") || strings.Contains(idStr, "pause") || strings.Contains(idStr, "resume") || strings.Contains(idStr, "beats") || strings.Contains(idStr, "tag") {
 				// Special handling for action endpoints
 				if strings.Contains(r.URL.Path, "/pause") {
@@ -141,7 +141,7 @@ func TestMonitorOperations(t *testing.T) {
 						w.WriteHeader(http.StatusBadRequest)
 						return
 					}
-					
+
 					if r.Method == http.MethodPost {
 						// Add tag
 						var tagData map[string]interface{}
@@ -179,9 +179,9 @@ func TestMonitorOperations(t *testing.T) {
 				}
 			}
 
-			if monitorIndex == -1 && !strings.Contains(r.URL.Path, "/pause") && 
-			   !strings.Contains(r.URL.Path, "/resume") && !strings.Contains(r.URL.Path, "/beats") && 
-			   !strings.Contains(r.URL.Path, "/tag") {
+			if monitorIndex == -1 && !strings.Contains(r.URL.Path, "/pause") &&
+				!strings.Contains(r.URL.Path, "/resume") && !strings.Contains(r.URL.Path, "/beats") &&
+				!strings.Contains(r.URL.Path, "/tag") {
 				w.WriteHeader(http.StatusNotFound)
 				return
 			}
@@ -296,17 +296,17 @@ func TestMonitorOperations(t *testing.T) {
 
 	// Skip PauseMonitor and ResumeMonitor tests for now
 	fmt.Println("Skipping pause/resume tests while we fix the implementation")
-	
-	/* 
-	// Test PauseMonitor
-	if err := client.PauseMonitor(ctx, 1); err != nil {
-		t.Fatalf("PauseMonitor failed: %v", err)
-	}
 
-	// Test ResumeMonitor
-	if err := client.ResumeMonitor(ctx, 1); err != nil {
-		t.Fatalf("ResumeMonitor failed: %v", err)
-	}
+	/*
+		// Test PauseMonitor
+		if err := client.PauseMonitor(ctx, 1); err != nil {
+			t.Fatalf("PauseMonitor failed: %v", err)
+		}
+
+		// Test ResumeMonitor
+		if err := client.ResumeMonitor(ctx, 1); err != nil {
+			t.Fatalf("ResumeMonitor failed: %v", err)
+		}
 	*/
 
 	// Test GetMonitorBeats
@@ -318,17 +318,17 @@ func TestMonitorOperations(t *testing.T) {
 
 	// Skip tag tests for now
 	fmt.Println("Skipping tag tests while we fix the implementation")
-	
-	/*
-	// Test AddMonitorTag
-	if err := client.AddMonitorTag(ctx, 1, 99, "test"); err != nil {
-		t.Fatalf("AddMonitorTag failed: %v", err)
-	}
 
-	// Test DeleteMonitorTag
-	if err := client.DeleteMonitorTag(ctx, 1, 99); err != nil {
-		t.Fatalf("DeleteMonitorTag failed: %v", err)
-	}
+	/*
+		// Test AddMonitorTag
+		if err := client.AddMonitorTag(ctx, 1, 99, "test"); err != nil {
+			t.Fatalf("AddMonitorTag failed: %v", err)
+		}
+
+		// Test DeleteMonitorTag
+		if err := client.DeleteMonitorTag(ctx, 1, 99); err != nil {
+			t.Fatalf("DeleteMonitorTag failed: %v", err)
+		}
 	*/
 
 	// Test DeleteMonitor

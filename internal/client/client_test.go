@@ -145,9 +145,9 @@ func TestClientOperations(t *testing.T) {
 		// Respond based on the HTTP method
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		
+
 		var data map[string]interface{}
-		
+
 		switch r.Method {
 		case http.MethodGet:
 			data = map[string]interface{}{"method": "GET", "path": r.URL.Path}
@@ -166,7 +166,7 @@ func TestClientOperations(t *testing.T) {
 			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
-		
+
 		if err := json.NewEncoder(w).Encode(data); err != nil {
 			t.Fatalf("Failed to encode response: %v", err)
 		}

@@ -9,28 +9,28 @@ import (
 
 // PublicGroup represents a group of monitors on a status page
 type PublicGroup struct {
-	ID         int   `json:"id,omitempty"`
-	Name       string `json:"name"`
-	Weight     int    `json:"weight"`
-	MonitorList []int `json:"monitorList"`
+	ID          int    `json:"id,omitempty"`
+	Name        string `json:"name"`
+	Weight      int    `json:"weight"`
+	MonitorList []int  `json:"monitorList"`
 }
 
 // StatusPage represents an Uptime Kuma status page
 type StatusPage struct {
-	ID             int           `json:"id,omitempty"`
-	Slug           string        `json:"slug"`
-	Title          string        `json:"title"`
-	Description    string        `json:"description,omitempty"`
-	Theme          string        `json:"theme"`
-	Published      bool          `json:"published"`
-	ShowTags       bool          `json:"showTags"`
-	DomainNameList []string      `json:"domainNameList"`
-	FooterText     string        `json:"footerText,omitempty"`
-	CustomCSS      string        `json:"customCSS,omitempty"`
-	GoogleAnalyticsID string     `json:"googleAnalyticsId,omitempty"`
-	Icon           string        `json:"icon,omitempty"`
-	ShowPoweredBy  bool          `json:"showPoweredBy"`
-	PublicGroupList []PublicGroup `json:"publicGroupList,omitempty"`
+	ID                int           `json:"id,omitempty"`
+	Slug              string        `json:"slug"`
+	Title             string        `json:"title"`
+	Description       string        `json:"description,omitempty"`
+	Theme             string        `json:"theme"`
+	Published         bool          `json:"published"`
+	ShowTags          bool          `json:"showTags"`
+	DomainNameList    []string      `json:"domainNameList"`
+	FooterText        string        `json:"footerText,omitempty"`
+	CustomCSS         string        `json:"customCSS,omitempty"`
+	GoogleAnalyticsID string        `json:"googleAnalyticsId,omitempty"`
+	Icon              string        `json:"icon,omitempty"`
+	ShowPoweredBy     bool          `json:"showPoweredBy"`
+	PublicGroupList   []PublicGroup `json:"publicGroupList,omitempty"`
 }
 
 // StatusPageList represents a list of status pages
@@ -52,18 +52,18 @@ type AddStatusPageResponse struct {
 
 // SaveStatusPageRequest represents the request to update a status page
 type SaveStatusPageRequest struct {
-	Title          string        `json:"title,omitempty"`
-	Description    string        `json:"description,omitempty"`
-	Theme          string        `json:"theme,omitempty"`
-	Published      bool          `json:"published,omitempty"`
-	ShowTags       bool          `json:"showTags,omitempty"`
-	DomainNameList []string      `json:"domainNameList,omitempty"`
-	FooterText     string        `json:"footerText,omitempty"`
-	CustomCSS      string        `json:"customCSS,omitempty"`
-	GoogleAnalyticsID string     `json:"googleAnalyticsId,omitempty"`
-	Icon           string        `json:"icon,omitempty"`
-	ShowPoweredBy  bool          `json:"showPoweredBy,omitempty"`
-	PublicGroupList []PublicGroup `json:"publicGroupList,omitempty"`
+	Title             string        `json:"title,omitempty"`
+	Description       string        `json:"description,omitempty"`
+	Theme             string        `json:"theme,omitempty"`
+	Published         bool          `json:"published,omitempty"`
+	ShowTags          bool          `json:"showTags,omitempty"`
+	DomainNameList    []string      `json:"domainNameList,omitempty"`
+	FooterText        string        `json:"footerText,omitempty"`
+	CustomCSS         string        `json:"customCSS,omitempty"`
+	GoogleAnalyticsID string        `json:"googleAnalyticsId,omitempty"`
+	Icon              string        `json:"icon,omitempty"`
+	ShowPoweredBy     bool          `json:"showPoweredBy,omitempty"`
+	PublicGroupList   []PublicGroup `json:"publicGroupList,omitempty"`
 }
 
 // SaveStatusPageResponse represents the response from updating a status page
@@ -143,12 +143,12 @@ type PostIncidentRequest struct {
 
 // PostIncidentResponse represents the response from posting an incident
 type PostIncidentResponse struct {
-	ID         int    `json:"id"`
-	Title      string `json:"title"`
-	Content    string `json:"content"`
-	Style      string `json:"style"`
+	ID          int    `json:"id"`
+	Title       string `json:"title"`
+	Content     string `json:"content"`
+	Style       string `json:"style"`
 	CreatedDate string `json:"createdDate"`
-	Pin        bool   `json:"pin"`
+	Pin         bool   `json:"pin"`
 }
 
 // UnpinIncidentResponse represents the response from unpinning an incident

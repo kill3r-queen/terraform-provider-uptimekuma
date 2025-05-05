@@ -28,9 +28,9 @@ func TestStatusPageOperations(t *testing.T) {
 			ShowPoweredBy:  true,
 			PublicGroupList: []PublicGroup{
 				{
-					ID:         1,
-					Name:       "API Services",
-					Weight:     1,
+					ID:          1,
+					Name:        "API Services",
+					Weight:      1,
 					MonitorList: []int{1, 2, 3},
 				},
 			},
@@ -48,9 +48,9 @@ func TestStatusPageOperations(t *testing.T) {
 			ShowPoweredBy:  false,
 			PublicGroupList: []PublicGroup{
 				{
-					ID:         2,
-					Name:       "Dev Services",
-					Weight:     1,
+					ID:          2,
+					Name:        "Dev Services",
+					Weight:      1,
 					MonitorList: []int{4, 5},
 				},
 			},
@@ -96,7 +96,7 @@ func TestStatusPageOperations(t *testing.T) {
 					w.WriteHeader(http.StatusBadRequest)
 					return
 				}
-				
+
 				// Check for duplicate slug
 				for _, sp := range statusPages {
 					if sp.Slug == request.Slug {
@@ -104,7 +104,7 @@ func TestStatusPageOperations(t *testing.T) {
 						return
 					}
 				}
-				
+
 				// Create new status page
 				newStatusPage := StatusPage{
 					ID:             len(statusPages) + 1,
@@ -119,7 +119,7 @@ func TestStatusPageOperations(t *testing.T) {
 					ShowPoweredBy:  true,
 				}
 				statusPages = append(statusPages, newStatusPage)
-				
+
 				w.WriteHeader(http.StatusOK)
 				json.NewEncoder(w).Encode(AddStatusPageResponse{
 					Msg: "Status page created",
@@ -134,7 +134,7 @@ func TestStatusPageOperations(t *testing.T) {
 			}
 
 			slug := parts[2]
-			
+
 			// Handle special endpoints
 			if len(parts) > 3 {
 				switch parts[3] {
@@ -156,7 +156,7 @@ func TestStatusPageOperations(t *testing.T) {
 								w.WriteHeader(http.StatusBadRequest)
 								return
 							}
-							
+
 							w.WriteHeader(http.StatusOK)
 							json.NewEncoder(w).Encode(PostIncidentResponse{
 								ID:          1,
@@ -199,7 +199,7 @@ func TestStatusPageOperations(t *testing.T) {
 					w.WriteHeader(http.StatusBadRequest)
 					return
 				}
-				
+
 				if request.Title != "" {
 					statusPages[spIndex].Title = request.Title
 				}
@@ -230,7 +230,7 @@ func TestStatusPageOperations(t *testing.T) {
 				if len(request.PublicGroupList) > 0 {
 					statusPages[spIndex].PublicGroupList = request.PublicGroupList
 				}
-				
+
 				w.WriteHeader(http.StatusOK)
 				json.NewEncoder(w).Encode(SaveStatusPageResponse{
 					Detail: "Status page updated",

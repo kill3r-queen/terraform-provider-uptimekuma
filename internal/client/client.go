@@ -11,11 +11,11 @@ import (
 
 // Config holds the configuration for the Uptime Kuma client
 type Config struct {
-	BaseURL        string
-	Username       string
-	Password       string
-	Timeout        time.Duration
-	InsecureHTTPS  bool
+	BaseURL          string
+	Username         string
+	Password         string
+	Timeout          time.Duration
+	InsecureHTTPS    bool
 	CustomHTTPClient *http.Client
 }
 
