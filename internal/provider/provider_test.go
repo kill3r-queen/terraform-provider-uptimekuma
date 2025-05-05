@@ -32,7 +32,7 @@ func testAccPreCheck(t *testing.T) {
 
 	for _, env := range requiredEnvVars {
 		if v := os.Getenv(env); v == "" {
-			t.Fatalf("%s environment variable must be set for acceptance tests.", env) 
+			t.Fatalf("%s environment variable must be set for acceptance tests.", env)
 		}
 	}
 }

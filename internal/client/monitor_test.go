@@ -47,7 +47,6 @@ func TestMonitorOperations(t *testing.T) {
 	initialMonitorsForCheck := make([]Monitor, len(monitors))
 	copy(initialMonitorsForCheck, monitors)
 
-
 	// Setup mock server with debugging
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Debug logging
@@ -100,18 +99,18 @@ func TestMonitorOperations(t *testing.T) {
 				// Assign next ID based on current slice length AFTER potential deletions
 				// This simple approach might lead to duplicate IDs if not careful in real app
 				nextID := 1
-                if len(monitors) > 0 {
-                     maxID := 0
-                     for _, m := range monitors {
-                          if m.ID > maxID {
-                               maxID = m.ID
-                          }
-                     }
-                     nextID = maxID + 1
-                }
+				if len(monitors) > 0 {
+					maxID := 0
+					for _, m := range monitors {
+						if m.ID > maxID {
+							maxID = m.ID
+						}
+					}
+					nextID = maxID + 1
+				}
 				newMonitor.ID = nextID
 				monitors = append(monitors, newMonitor) // Append the new value
-				w.WriteHeader(http.StatusCreated) // Use 201 Created for new resources
+				w.WriteHeader(http.StatusCreated)       // Use 201 Created for new resources
 				// FIX: Check error on Encode
 				err := json.NewEncoder(w).Encode(newMonitor) // Return the created monitor with its ID
 				if err != nil {
@@ -181,7 +180,10 @@ func TestMonitorOperations(t *testing.T) {
 						w.WriteHeader(http.StatusOK)
 						// Optionally encode a success message
 						err := json.NewEncoder(w).Encode(map[string]string{"msg": "ok"})
-                        if err != nil { fmt.Printf("ERROR encoding pause response: %v\n", err); http.Error(w, "encode error", 500)}
+						if err != nil {
+							fmt.Printf("ERROR encoding pause response: %v\n", err)
+							http.Error(w, "encode error", 500)
+						}
 						return
 					}
 					http.Error(w, "Method not allowed for pause action", http.StatusMethodNotAllowed)
@@ -191,7 +193,10 @@ func TestMonitorOperations(t *testing.T) {
 						w.WriteHeader(http.StatusOK)
 						// Optionally encode a success message
 						err := json.NewEncoder(w).Encode(map[string]string{"msg": "ok"})
-                        if err != nil { fmt.Printf("ERROR encoding resume response: %v\n", err); http.Error(w, "encode error", 500)}
+						if err != nil {
+							fmt.Printf("ERROR encoding resume response: %v\n", err)
+							http.Error(w, "encode error", 500)
+						}
 						return
 					}
 					http.Error(w, "Method not allowed for resume action", http.StatusMethodNotAllowed)
@@ -228,7 +233,10 @@ func TestMonitorOperations(t *testing.T) {
 						w.WriteHeader(http.StatusOK)
 						// Optionally encode a success message
 						err := json.NewEncoder(w).Encode(map[string]string{"msg": "tag added"}) // Example response
-						if err != nil { fmt.Printf("ERROR encoding add tag response: %v\n", err); http.Error(w, "encode error", 500)}
+						if err != nil {
+							fmt.Printf("ERROR encoding add tag response: %v\n", err)
+							http.Error(w, "encode error", 500)
+						}
 						return // Important: return after handling success
 
 					case http.MethodDelete:
@@ -242,7 +250,10 @@ func TestMonitorOperations(t *testing.T) {
 						w.WriteHeader(http.StatusOK)
 						// Optionally encode a success message
 						err := json.NewEncoder(w).Encode(map[string]string{"msg": "tag deleted"}) // Example response
-						if err != nil { fmt.Printf("ERROR encoding delete tag response: %v\n", err); http.Error(w, "encode error", 500)}
+						if err != nil {
+							fmt.Printf("ERROR encoding delete tag response: %v\n", err)
+							http.Error(w, "encode error", 500)
+						}
 						return // Important: return after handling success
 
 					default:
@@ -304,7 +315,10 @@ func TestMonitorOperations(t *testing.T) {
 				w.WriteHeader(http.StatusOK) // Or 204 No Content
 				// Optionally encode a success message
 				err := json.NewEncoder(w).Encode(map[string]string{"msg": "ok"})
-                if err != nil { fmt.Printf("ERROR encoding delete monitor response: %v\n", err); http.Error(w, "encode error", 500)}
+				if err != nil {
+					fmt.Printf("ERROR encoding delete monitor response: %v\n", err)
+					http.Error(w, "encode error", 500)
+				}
 				return
 			default:
 				http.Error(w, "Method not allowed for this resource", http.StatusMethodNotAllowed)

@@ -19,13 +19,13 @@ type TokenResponse struct {
 
 // AuthClient handles authentication with the Uptime Kuma API.
 type AuthClient struct {
-	baseURL    string
-	username   string
-	password   string
-	httpClient *http.Client
-	token      string
+	baseURL     string
+	username    string
+	password    string
+	httpClient  *http.Client
+	token       string
 	tokenExpiry time.Time
-	mutex      sync.RWMutex
+	mutex       sync.RWMutex
 }
 
 // NewAuthClient creates a new auth client.

@@ -6,7 +6,6 @@ import (
 	"fmt" // Import fmt for logging errors in handler
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"strings"
 	"testing"
 	"time"
@@ -90,12 +89,18 @@ func TestStatusPageOperations(t *testing.T) {
 		if r.URL.Path == "/status-pages" {
 			switch r.Method {
 			case http.MethodGet:
-				// List status pages
 				w.WriteHeader(http.StatusOK)
-				// FIX: Check error on Encode (Line 88)
+				statusPagesValues := make([]StatusPage, 0, len(statusPages))
+				for _, spPtr := range statusPages {
+					if spPtr != nil {
+						statusPagesValues = append(statusPagesValues, *spPtr)
+					}
+				}
+
 				err := json.NewEncoder(w).Encode(StatusPageList{
-					StatusPagesPointers: statusPages, // Assuming StatusPageList expects pointers if you modify the list
+					StatusPages: statusPagesValues,
 				})
+
 				if err != nil {
 					fmt.Printf("ERROR encoding status page list: %v\n", err)
 					http.Error(w, "failed to encode status page list", http.StatusInternalServerError)
@@ -387,10 +392,22 @@ func TestStatusPageOperations(t *testing.T) {
 	if err != nil {
 		t.Fatalf("UpdateStatusPage failed for '%s': %v", updatePageSlug, err)
 	}
-	if !strings.Contains(updateResult.Detail, "updated") {
-		t.Errorf("UpdateStatusPage returned unexpected result detail: %+v", updateResult)
+
+	// --- Start Fix for Detail field type assertion ---
+	// Assert that the Detail field (which is interface{}) holds a string
+	detailStr, ok := updateResult.Detail.(string)
+	if !ok {
+		// If the underlying type isn't a string, fail the test
+		t.Fatalf("UpdateStatusPage response field 'Detail' was not a string: type=%T, value=%+v",
+			updateResult.Detail, updateResult)
 	}
-	// Verify update
+
+	if !strings.Contains(detailStr, "updated") {
+		t.Errorf("UpdateStatusPage returned unexpected result detail string: '%s'", detailStr)
+	}
+	// --- End Fix ---
+
+	// Verify update by getting the page again
 	updatedPage, err := client.GetStatusPage(ctx, updatePageSlug)
 	if err != nil {
 		t.Fatalf("GetStatusPage failed for updated '%s': %v", updatePageSlug, err)
@@ -442,6 +459,5 @@ func TestStatusPageOperations(t *testing.T) {
 	}
 
 }
-
 
 // NOTE: Period added for godot linter.

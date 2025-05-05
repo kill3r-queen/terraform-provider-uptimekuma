@@ -115,7 +115,6 @@ func (c *Client) doRequest(ctx context.Context, method, path string, requestBody
 		fmt.Printf("Warning: failed to read response body: %v\n", readErr)
 	}
 
-
 	// Check status code
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
 		return fmt.Errorf("request failed with status %d: %s", resp.StatusCode, string(respBodyBytes))
@@ -125,7 +124,7 @@ func (c *Client) doRequest(ctx context.Context, method, path string, requestBody
 	if result != nil {
 		if readErr != nil {
 			// If reading failed earlier, we can't decode
- 			return fmt.Errorf("failed to decode response body due to read error: %w", readErr)
+			return fmt.Errorf("failed to decode response body due to read error: %w", readErr)
 		}
 		// Use Unmarshal since we already read the body
 		if err := json.Unmarshal(respBodyBytes, result); err != nil {

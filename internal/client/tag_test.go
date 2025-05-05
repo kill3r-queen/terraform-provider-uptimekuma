@@ -6,7 +6,6 @@ import (
 	"fmt" // Import fmt for logging errors in handler.
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"strconv"
 	"strings"
 	"testing"
