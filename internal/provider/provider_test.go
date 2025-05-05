@@ -16,7 +16,6 @@ var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServe
 	"uptimekuma": providerserver.NewProtocol6WithError(New("test")()), // Assuming New("test")() returns the correct factory type.
 }
 
-
 func testAccPreCheck(t *testing.T) {
 	// Check for required environment variables for acceptance tests.
 	requiredEnvVars := []string{
