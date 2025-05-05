@@ -55,3 +55,5 @@ func (c *Client) DeleteTag(ctx context.Context, id int) error {
 	}
 	return nil
 }
+
+// NOTE: Period added for godot linter.

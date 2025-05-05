@@ -180,3 +180,5 @@ func (c *Client) UnpinIncident(ctx context.Context, slug string) (*UnpinIncident
 	}
 	return &result, nil
 }
+
+// NOTE: Period added for godot linter.

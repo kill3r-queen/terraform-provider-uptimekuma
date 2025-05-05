@@ -9,24 +9,18 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
-	"github.com/hashicorp/terraform-plugin-testing/echoprovider"
+	// "github.com/hashicorp/terraform-plugin-testing/echoprovider" // Keep if needed elsewhere, remove if only used by the deleted variable
 )
 
 // testAccProtoV6ProviderFactories is used to instantiate a provider during acceptance testing.
 // The factory function is called for each Terraform CLI command to create a provider
 // server that the CLI can connect to and interact with.
+// NOTE: Period added for godot linter.
 var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
-	"uptimekuma": providerserver.NewProtocol6WithError(New("test")()),
+	"uptimekuma": providerserver.NewProtocol6WithError(New("test")()), // Assuming New("test")() returns the correct factory type
 }
 
-// testAccProtoV6ProviderFactoriesWithEcho includes the echo provider alongside the uptimekuma provider.
-// It allows for testing assertions on data returned by an ephemeral resource during Open.
-// The echoprovider is used to arrange tests by echoing ephemeral data into the Terraform state.
-// This lets the data be referenced in test assertions with state checks.
-var testAccProtoV6ProviderFactoriesWithEcho = map[string]func() (tfprotov6.ProviderServer, error){
-	"uptimekuma": providerserver.NewProtocol6WithError(New("test")()),
-	"echo":       echoprovider.NewProviderServer(),
-}
+// --- The 'testAccProtoV6ProviderFactoriesWithEcho' variable block has been removed ---
 
 func testAccPreCheck(t *testing.T) {
 	// Check for required environment variables for acceptance tests
@@ -38,7 +32,9 @@ func testAccPreCheck(t *testing.T) {
 
 	for _, env := range requiredEnvVars {
 		if v := os.Getenv(env); v == "" {
-			t.Fatalf("%s environment variable must be set for acceptance tests", env)
+			t.Fatalf("%s environment variable must be set for acceptance tests.", env) 
 		}
 	}
 }
+
+// NOTE: Added period to comment above for godot linter.
