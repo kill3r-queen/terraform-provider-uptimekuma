@@ -201,7 +201,7 @@ func (r *MonitorResource) Create(ctx context.Context, req resource.CreateRequest
 	monitor := &client.Monitor{
 		Type:          client.MonitorType(data.Type.ValueString()),
 		Name:          data.Name.ValueString(),
-		Description    data.Description.ValueString(),
+		Description:    data.Description.ValueString(),
 		Interval:      int(data.Interval.ValueInt64()),
 		RetryInterval: int(data.RetryInterval.ValueInt64()),
 		ResendInterval: int(data.ResendInterval.ValueInt64()),
@@ -339,7 +339,7 @@ func (r *MonitorResource) Update(ctx context.Context, req resource.UpdateRequest
 	monitor := &client.Monitor{
 		Type:          client.MonitorType(data.Type.ValueString()),
 		Name:          data.Name.ValueString(),
-		Description    data.Description.ValueString(),
+		Description:    data.Description.ValueString(),
 		Interval:      int(data.Interval.ValueInt64()),
 		RetryInterval: int(data.RetryInterval.ValueInt64()),
 		ResendInterval: int(data.ResendInterval.ValueInt64()),
