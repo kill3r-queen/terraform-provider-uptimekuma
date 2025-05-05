@@ -21,6 +21,7 @@ func TestMonitorOperations(t *testing.T) {
 			ID:            1,
 			Type:          MonitorTypeHTTP,
 			Name:          "Test Monitor 1",
+			Description:   "string",
 			URL:           "https://test1.example.com",
 			Method:        "GET",
 			Interval:      60,
@@ -32,6 +33,7 @@ func TestMonitorOperations(t *testing.T) {
 			ID:            2,
 			Type:          MonitorTypePing,
 			Name:          "Test Monitor 2",
+			Description:   "string",
 			Hostname:      "test2.example.com",
 			Interval:      120,
 			RetryInterval: 60,
@@ -256,6 +258,7 @@ func TestMonitorOperations(t *testing.T) {
 	newMonitor := &Monitor{
 		Type:          MonitorTypeHTTP,
 		Name:          "New Monitor",
+		Description:   "string",
 		URL:           "https://new.example.com",
 		Method:        "GET",
 		Interval:      60,
@@ -275,6 +278,7 @@ func TestMonitorOperations(t *testing.T) {
 	updatedMonitor := &Monitor{
 		Type:          MonitorTypeHTTP,
 		Name:          "Updated Monitor",
+		Description:   "string",
 		URL:           "https://updated.example.com",
 		Method:        "GET",
 		Interval:      120,

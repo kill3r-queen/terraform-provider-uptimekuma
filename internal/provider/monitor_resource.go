@@ -38,6 +38,7 @@ type MonitorResourceModel struct {
 	ID            types.Int64  `tfsdk:"id"`
 	Type          types.String `tfsdk:"type"`
 	Name          types.String `tfsdk:"name"`
+	Description   types.String `tfsdk:"description"`
 	URL           types.String `tfsdk:"url"`
 	Method        types.String `tfsdk:"method"`
 	Hostname      types.String `tfsdk:"hostname"`
@@ -79,6 +80,10 @@ func (r *MonitorResource) Schema(ctx context.Context, req resource.SchemaRequest
 			},
 			"name": schema.StringAttribute{
 				MarkdownDescription: "Monitor name",
+				Required:            true,
+			},
+			"description": schema.StringAttribute{
+				MarkdownDescription: "Monitor description",
 				Required:            true,
 			},
 			"url": schema.StringAttribute{
@@ -196,6 +201,7 @@ func (r *MonitorResource) Create(ctx context.Context, req resource.CreateRequest
 	monitor := &client.Monitor{
 		Type:          client.MonitorType(data.Type.ValueString()),
 		Name:          data.Name.ValueString(),
+		Description    data.Description.ValueString(),
 		Interval:      int(data.Interval.ValueInt64()),
 		RetryInterval: int(data.RetryInterval.ValueInt64()),
 		ResendInterval: int(data.ResendInterval.ValueInt64()),
@@ -294,6 +300,7 @@ func (r *MonitorResource) Read(ctx context.Context, req resource.ReadRequest, re
 	data.ID = types.Int64Value(int64(monitor.ID))
 	data.Type = types.StringValue(string(monitor.Type))
 	data.Name = types.StringValue(monitor.Name)
+	data.Description = types.StringValue(monitor.Description)
 	data.URL = types.StringValue(monitor.URL)
 	data.Method = types.StringValue(monitor.Method)
 	data.Hostname = types.StringValue(monitor.Hostname)
@@ -332,6 +339,7 @@ func (r *MonitorResource) Update(ctx context.Context, req resource.UpdateRequest
 	monitor := &client.Monitor{
 		Type:          client.MonitorType(data.Type.ValueString()),
 		Name:          data.Name.ValueString(),
+		Description    data.Description.ValueString(),
 		Interval:      int(data.Interval.ValueInt64()),
 		RetryInterval: int(data.RetryInterval.ValueInt64()),
 		ResendInterval: int(data.ResendInterval.ValueInt64()),

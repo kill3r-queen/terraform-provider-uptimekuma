@@ -48,6 +48,7 @@ type Monitor struct {
 	ID                  int           `json:"id,omitempty"`
 	Type                MonitorType   `json:"type"`
 	Name                string        `json:"name"`
+	Description         string        `json:"description"`
 	URL                 string        `json:"url,omitempty"`
 	Method              string        `json:"method,omitempty"`
 	Hostname            string        `json:"hostname,omitempty"`

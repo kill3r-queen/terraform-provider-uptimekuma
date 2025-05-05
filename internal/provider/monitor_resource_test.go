@@ -15,58 +15,68 @@ import (
 )
 
 func TestAccMonitorResource(t *testing.T) {
-	resource.Test(t, resource.TestCase{
-		PreCheck:                 func() { testAccPreCheck(t) },
-		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			// Create and Read testing
-			{
-				Config: testAccMonitorResourceConfig("HTTP Monitor", "http", "https://example.com"),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(
-						"uptimekuma_monitor.test",
-						tfjsonpath.New("name"),
-						knownvalue.StringExact("HTTP Monitor"),
-					),
-					statecheck.ExpectKnownValue(
-						"uptimekuma_monitor.test",
-						tfjsonpath.New("type"),
-						knownvalue.StringExact("http"),
-					),
-					statecheck.ExpectKnownValue(
-						"uptimekuma_monitor.test",
-						tfjsonpath.New("url"),
-						knownvalue.StringExact("https://example.com"),
-					),
-				},
-			},
-			// ImportState testing
-			{
-				ResourceName:      "uptimekuma_monitor.test",
-				ImportState:       true,
-				ImportStateVerify: true,
-				// Certain fields may not be returned by the API and should be excluded from import verification
-				ImportStateVerifyIgnore: []string{"basic_auth_pass"},
-			},
-			// Update and Read testing
-			{
-				Config: testAccMonitorResourceConfig("Updated HTTP Monitor", "http", "https://updated-example.com"),
-				ConfigStateChecks: []statecheck.StateCheck{
-					statecheck.ExpectKnownValue(
-						"uptimekuma_monitor.test",
-						tfjsonpath.New("name"),
-						knownvalue.StringExact("Updated HTTP Monitor"),
-					),
-					statecheck.ExpectKnownValue(
-						"uptimekuma_monitor.test",
-						tfjsonpath.New("url"),
-						knownvalue.StringExact("https://updated-example.com"),
-					),
-				},
-			},
-			// Delete testing automatically occurs in TestCase
-		},
-	})
+    initialDescription := "Test HTTP Monitor Description"
+    updatedDescription := "Updated Test HTTP Monitor Description"
+
+    resource.Test(t, resource.TestCase{
+        PreCheck:                 func() { testAccPreCheck(t) },
+        ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
+        Steps: []resource.TestStep{
+            {
+                Config: testAccMonitorResourceConfig("HTTP Monitor", "http", "https://example.com", initialDescription),
+                ConfigStateChecks: []statecheck.StateCheck{
+                    statecheck.ExpectKnownValue(
+                        "uptimekuma_monitor.test",
+                        tfjsonpath.New("name"),
+                        knownvalue.StringExact("HTTP Monitor"),
+                    ),
+                    statecheck.ExpectKnownValue(
+                        "uptimekuma_monitor.test",
+                        tfjsonpath.New("type"),
+                        knownvalue.StringExact("http"),
+                    ),
+                    statecheck.ExpectKnownValue(
+                        "uptimekuma_monitor.test",
+                        tfjsonpath.New("url"),
+                        knownvalue.StringExact("https://example.com"),
+                    ),
+                    statecheck.ExpectKnownValue(
+                        "uptimekuma_monitor.test",
+                        tfjsonpath.New("description"),
+                        knownvalue.StringExact(initialDescription),
+                    ),
+                },
+            },
+            {
+                ResourceName:      "uptimekuma_monitor.test",
+                ImportState:       true,
+                ImportStateVerify: true,
+                
+                ImportStateVerifyIgnore: []string{"basic_auth_pass"}, 
+            },
+            {
+                Config: testAccMonitorResourceConfig("Updated HTTP Monitor", "http", "https://updated-example.com", updatedDescription),
+                ConfigStateChecks: []statecheck.StateCheck{
+                    statecheck.ExpectKnownValue(
+                        "uptimekuma_monitor.test",
+                        tfjsonpath.New("name"),
+                        knownvalue.StringExact("Updated HTTP Monitor"),
+                    ),
+                    statecheck.ExpectKnownValue(
+                        "uptimekuma_monitor.test",
+                        tfjsonpath.New("url"),
+                        knownvalue.StringExact("https://updated-example.com"),
+                    ),
+                    statecheck.ExpectKnownValue(
+                        "uptimekuma_monitor.test",
+                        tfjsonpath.New("description"),
+                        knownvalue.StringExact(updatedDescription),
+                    ),
+                },
+            },
+            
+        },
+    })
 }
 
 func testAccMonitorResourceConfig(name, monitorType, url string) string {
@@ -78,9 +88,10 @@ provider "uptimekuma" {
 }
 
 resource "uptimekuma_monitor" "test" {
-  name     = %[4]q
-  type     = %[5]q
-  url      = %[6]q
+  name        = %[4]q
+  type        = %[5]q
+  url         = %[6]q
+  description = %[7]q
   interval = 60
   max_retries = 3
   retry_interval = 30
@@ -97,7 +108,6 @@ func TestAccPingMonitorResource(t *testing.T) {
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
-			// Create and Read testing
 			{
 				Config: testAccPingMonitorResourceConfig("Ping Monitor", "example.com"),
 				ConfigStateChecks: []statecheck.StateCheck{
@@ -118,13 +128,13 @@ func TestAccPingMonitorResource(t *testing.T) {
 					),
 				},
 			},
-			// Delete testing automatically occurs in TestCase
 		},
 	})
 }
 
-func testAccPingMonitorResourceConfig(name, hostname string) string {
-	return fmt.Sprintf(`
+
+func testAccPingMonitorResourceConfig(name, hostname, description string) string {
+    return fmt.Sprintf(`
 provider "uptimekuma" {
   base_url = "%s"
   username = "%s"
@@ -132,15 +142,16 @@ provider "uptimekuma" {
 }
 
 resource "uptimekuma_monitor" "ping_test" {
-  name     = %[4]q
-  type     = "ping"
-  hostname = %[5]q
-  interval = 60
-  max_retries = 3
+  name            = %[4]q
+  type            = "ping"
+  hostname        = %[5]q
+  description     = %[6]q 
+  interval        = 60
+  max_retries     = 3
 }
-`, 
-	os.Getenv("UPTIMEKUMA_BASE_URL"),
-	os.Getenv("UPTIMEKUMA_USERNAME"),
-	os.Getenv("UPTIMEKUMA_PASSWORD"),
-	name, hostname)
+`,
+        os.Getenv("UPTIMEKUMA_BASE_URL"),
+        os.Getenv("UPTIMEKUMA_USERNAME"),
+        os.Getenv("UPTIMEKUMA_PASSWORD"),
+        name, hostname, description)
 }

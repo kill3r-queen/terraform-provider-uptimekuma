@@ -1,4 +1,8 @@
 # Uptime Kuma API Documentation
+use this 
+https://github.com/alencarsouza/Uptime-Kuma-Web-API/tree/feature/upgrade-uptime-kuma-api-version
+https://github.com/MedAziz11/Uptime-Kuma-Web-API/pull/59
+https://hub.docker.com/r/haukemarquardt/uptimekuma_api
 
 ## Overview
 The Uptime Kuma API provides a comprehensive set of endpoints for managing monitoring services, status pages, maintenance windows, and user authentication. Base URL: `/api/v1`

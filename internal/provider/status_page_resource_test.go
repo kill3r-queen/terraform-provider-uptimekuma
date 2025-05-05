@@ -138,13 +138,15 @@ provider "uptimekuma" {
 
 resource "uptimekuma_monitor" "http1" {
   name     = "HTTP Monitor 1"
+  description = "string"
   type     = "http"
   url      = "https://example.com"
   interval = 60
 }
 
 resource "uptimekuma_monitor" "http2" {
-  name     = "HTTP Monitor 2" 
+  name     = "HTTP Monitor 2"
+  description = "string"
   type     = "http"
   url      = "https://example.org"
   interval = 60
