@@ -13,7 +13,7 @@ provider "uptimekuma" {
   password = "password"               # Password for authentication
 }
 
-# Create HTTP monitors for different services
+# Create HTTP monitors for different service
 resource "uptimekuma_monitor" "website" {
   name           = "Company Website"
   type           = "http" 
