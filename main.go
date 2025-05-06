@@ -8,7 +8,7 @@ import (
 	"flag"
 	"log"
 
-	"github.com/ehealth-co-id/terraform-provider-uptimekuma/internal/provider"
+	"github.com/kill3r-queen/terraform-provider-uptimekuma/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
@@ -28,7 +28,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/ehealth-co-id/uptimekuma",
+		Address: "registry.terraform.io/kill3r-queen/uptimekuma",
 		Debug:   debug,
 	}
 

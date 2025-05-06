@@ -37,7 +37,7 @@ Configure the provider in your Terraform configuration:
 terraform {
   required_providers {
     uptimekuma = {
-      source = "ehealth-co-id/uptimekuma"
+      source = "kill3r-queen/uptimekuma"
     }
   }
 }

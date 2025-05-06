@@ -14,7 +14,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	"github.com/ehealth-co-id/terraform-provider-uptimekuma/internal/client"
+	"github.com/kill3r-queen/terraform-provider-uptimekuma/internal/client"
 )
 
 // Ensure UptimeKumaProvider satisfies various provider interfaces.

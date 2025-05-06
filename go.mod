@@ -1,4 +1,4 @@
-module github.com/ehealth-co-id/terraform-provider-uptimekuma
+module github.com/kill3r-queen/terraform-provider-uptimekuma
 
 go 1.23.0
 
