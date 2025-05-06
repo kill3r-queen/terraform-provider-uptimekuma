@@ -6,10 +6,9 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
-
-	"github.com/kill3r-queen/terraform-provider-uptimekuma/internal/provider"
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+	"github.com/kill3r-queen/terraform-provider-uptimekuma/internal/provider"
+	"log"
 )
 
 var (
