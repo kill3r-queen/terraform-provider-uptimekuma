@@ -145,14 +145,14 @@ func TestAccStatusPageResourceWithGroups(t *testing.T) {
 					statecheck.ExpectKnownValue(
 						"uptimekuma_status_page.with_groups",
 						tfjsonpath.New("public_group_list[0].weight"),
-						knownvalue.Int64Exact(1), 
+						knownvalue.Int64Exact(1),
 					),
 					// Check weight of second group.
-					 statecheck.ExpectKnownValue(
+					statecheck.ExpectKnownValue(
 						"uptimekuma_status_page.with_groups",
 						tfjsonpath.New("public_group_list[1].weight"),
 						knownvalue.Int64Exact(2),
-					 ),
+					),
 				},
 			},
 			// Delete testing automatically occurs in TestCase.
