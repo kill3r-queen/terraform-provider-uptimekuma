@@ -128,7 +128,7 @@ resource "uptimekuma_monitor" "port_example" {
 #### Argument Reference
 
 * `name` - (Required) The name of the monitor.
-* `description` - (Optional) Description of the monitor.
+* `description` - (Required) Description of the monitor.
 * `type` - (Required) The type of monitor. Valid values: `http`, `ping`, `port`, `dns`, `keyword`, `grpc-keyword`, `docker`, `push`, `steam`, `gamedig`, `mqtt`, `sqlserver`, `postgres`, `mysql`, `mongodb`, `radius`, `redis`.
 * `interval` - (Optional) The interval in seconds between checks. Default: `60`.
 * `retry_interval` - (Optional) The interval in seconds between retries. Default: `60`.
