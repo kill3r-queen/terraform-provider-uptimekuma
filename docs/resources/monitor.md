@@ -17,6 +17,7 @@ resource "uptimekuma_monitor" "http_example" {
   name           = "Example Website"
   type           = "http"
   url            = "https://example.com"
+  description    = "string"
   method         = "GET"
   interval       = 60
   retry_interval = 30
@@ -27,6 +28,7 @@ resource "uptimekuma_monitor" "http_example" {
 
 resource "uptimekuma_monitor" "ping_example" {
   name           = "Ping Example"
+  description    = "string"
   type           = "ping"
   hostname       = "example.com"
   interval       = 120
@@ -37,6 +39,7 @@ resource "uptimekuma_monitor" "ping_example" {
 resource "uptimekuma_monitor" "keyword_example" {
   name           = "Keyword Search Example"
   type           = "keyword"
+  description    = "string"
   url            = "https://example.com"
   method         = "GET"
   interval       = 300
@@ -49,6 +52,7 @@ resource "uptimekuma_monitor" "port_example" {
   name           = "Port Example"
   type           = "port"
   hostname       = "example.com"
+  description    = "string"
   port           = 443
   interval       = 60
   retry_interval = 30
@@ -58,6 +62,7 @@ resource "uptimekuma_monitor" "port_example" {
 resource "uptimekuma_monitor" "authenticated_http" {
   name           = "Authenticated API"
   type           = "http"
+  description    = "string"
   url            = "https://api.example.com/private"
   method         = "GET"
   interval       = 60
