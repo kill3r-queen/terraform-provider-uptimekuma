@@ -100,18 +100,33 @@ func (c *Client) GetMonitor(ctx context.Context, id int) (*Monitor, error) {
 	return &result, nil
 }
 
-// CreateMonitor creates a new monitor.
+type createMonitorAPIResponse struct {
+	Msg       string `json:"msg"`
+	MonitorID int    `json:"monitorID"`
+}
+
 func (c *Client) CreateMonitor(ctx context.Context, monitor *Monitor) (*Monitor, error) {
 	data, err := json.Marshal(monitor)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal monitor: %w", err)
 	}
 
-	var result Monitor
-	if err := c.Post(ctx, "/monitors", bytes.NewReader(data), &result); err != nil {
-		return nil, fmt.Errorf("failed to create monitor: %w", err)
+	// Decode API response into the specific response struct.
+	var apiResponse createMonitorAPIResponse
+	if err := c.Post(ctx, "/monitors", bytes.NewReader(data), &apiResponse); err != nil {
+		return nil, fmt.Errorf("failed POST request: %w", err)
 	}
-	return &result, nil
+
+	// Check if ID is valid.
+	if apiResponse.MonitorID <= 0 {
+		return nil, fmt.Errorf("API did not return valid MonitorID: %d", apiResponse.MonitorID)
+	}
+
+	// Transfer the ID from the API response field (apiResponse.MonitorID) to the standard '.ID' field of the input monitor struct.
+	monitor.ID = apiResponse.MonitorID
+
+	// Return the original monitor struct, now containing the correct ID in its .ID field.
+	return monitor, nil
 }
 
 // UpdateMonitor updates an existing monitor.
