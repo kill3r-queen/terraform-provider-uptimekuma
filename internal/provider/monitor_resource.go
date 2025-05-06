@@ -338,7 +338,7 @@ func (r *MonitorResource) Update(ctx context.Context, req resource.UpdateRequest
 
 	monitorID := int(data.ID.ValueInt64())
 
-	// Prepare the API request.
+	// Prepare the API requester.
 	monitor := &client.Monitor{
 		Type:           client.MonitorType(data.Type.ValueString()),
 		Name:           data.Name.ValueString(),
