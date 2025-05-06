@@ -52,6 +52,7 @@ provider "uptimekuma" {
 # Create an HTTP monitor
 resource "uptimekuma_monitor" "website" {
   name           = "Company Website"
+  description    = "string"
   type           = "http" 
   url            = "https://example.com"
   interval       = 60
@@ -89,6 +90,7 @@ The `uptimekuma_monitor` resource allows you to create and manage monitors in Up
 # HTTP Monitor
 resource "uptimekuma_monitor" "http_example" {
   name           = "Example Website"
+  description    = "string"
   type           = "http"
   url            = "https://example.com"
   method         = "GET"
@@ -102,6 +104,7 @@ resource "uptimekuma_monitor" "http_example" {
 # Ping Monitor
 resource "uptimekuma_monitor" "ping_example" {
   name           = "Ping Example"
+  description    = "string"
   type           = "ping"
   hostname       = "example.com"
   interval       = 120
@@ -112,6 +115,7 @@ resource "uptimekuma_monitor" "ping_example" {
 # Port Monitor
 resource "uptimekuma_monitor" "port_example" {
   name           = "Port Example"
+  description    = "string"
   type           = "port"
   hostname       = "example.com"
   port           = 443
