@@ -4,7 +4,6 @@
 package client
 
 import (
-	"bytes" // Import bytes for handling request body.
 	"context"
 	"encoding/json"
 	"fmt"
@@ -19,7 +18,7 @@ type Config struct {
 	Username         string
 	Password         string
 	Timeout          time.Duration
-	InsecureHTTPS    bool // You might need to handle this in http.Client transport.
+	InsecureHTTPS    bool
 	CustomHTTPClient *http.Client
 }
 
@@ -27,12 +26,12 @@ type Config struct {
 type Client struct {
 	config     *Config
 	authClient *AuthClient
-	httpClient *http.Client // This client should handle auth automatically.
+	httpClient *http.Client
 }
 
 // New creates a new Uptime Kuma API client.
 func New(config *Config) (*Client, error) {
-	// Validate config
+	// Validate config.
 	if config.BaseURL == "" {
 		return nil, fmt.Errorf("base URL is required")
 	}
@@ -48,12 +47,11 @@ func New(config *Config) (*Client, error) {
 		config.Timeout = 30 * time.Second
 	}
 
-	// Create base HTTP client (used by AuthClient for token fetching).
-	baseHttpClient := config.CustomHTTPClient
-	if baseHttpClient == nil {
-		baseHttpClient = &http.Client{
+	// Create HTTP client.
+	httpClient := config.CustomHTTPClient
+	if httpClient == nil {
+		httpClient = &http.Client{
 			Timeout: config.Timeout,
-			// TODO: Handle config.InsecureHTTPS if needed, e.g., using tls.Config.
 		}
 	}
 
@@ -62,74 +60,49 @@ func New(config *Config) (*Client, error) {
 		config.BaseURL,
 		config.Username,
 		config.Password,
-		baseHttpClient, // Pass the base client here.
+		httpClient,
 	)
 
-	// Create the main API client with an *authenticated* http client.
-	// The authenticated client uses the authClient internally via its transport.
-	authenticatedHttpClient := authClient.AuthenticatedClient()
-
+	// Create API client with authenticated http client.
 	return &Client{
 		config:     config,
-		authClient: authClient, // Store authClient if needed elsewhere, otherwise optional.
-		httpClient: authenticatedHttpClient,
+		authClient: authClient,
+		httpClient: authClient.AuthenticatedClient(),
 	}, nil
 }
 
 // doRequest performs an HTTP request and decodes the response.
-func (c *Client) doRequest(ctx context.Context, method, path string, requestBody interface{}, result interface{}) error {
-	// Create request URL.
-	url := fmt.Sprintf("%s%s", c.config.BaseURL, path)
-
-	// Marshal request body if provided.
-	var bodyReader io.Reader
-	if requestBody != nil {
-		bodyBytes, err := json.Marshal(requestBody)
-		if err != nil {
-			return fmt.Errorf("failed to marshal request body: %w", err)
-		}
-		bodyReader = bytes.NewReader(bodyBytes)
-	}
-
+func (c *Client) doRequest(ctx context.Context, method, path string, body io.Reader, result interface{}) error {
 	// Create request.
-	req, err := http.NewRequestWithContext(ctx, method, url, bodyReader)
+	url := fmt.Sprintf("%s%s", c.config.BaseURL, path)
+	req, err := http.NewRequestWithContext(ctx, method, url, body)
 	if err != nil {
 		return fmt.Errorf("failed to create request: %w", err)
 	}
 
 	// Set common headers.
 	req.Header.Set("Accept", "application/json")
-	if requestBody != nil {
+	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
 
-	// Execute request using the authenticated client.
-	// The authTransport within c.httpClient will handle adding the Bearer token.
+	// Execute request.
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed to execute request: %w", err)
 	}
 	defer resp.Body.Close()
 
-	// Read body first for better error messages.
-	respBodyBytes, readErr := io.ReadAll(resp.Body)
-	if readErr != nil {
-		// Log reading error but still check status code.
-		fmt.Printf("Warning: failed to read response body: %v\n", readErr)
-	}
-
 	// Check status code.
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("request failed with status %d: %s", resp.StatusCode, string(respBodyBytes))
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return fmt.Errorf("request failed with status %d: %s", resp.StatusCode, string(bodyBytes))
 	}
 
-	// Decode response if result is provided and body was read successfully.
+	// Decode response if result is provided.
 	if result != nil {
-		if readErr != nil {
-			return fmt.Errorf("failed to decode response body due to read error: %w", readErr)
-		}
-		if err := json.Unmarshal(respBodyBytes, result); err != nil {
-			return fmt.Errorf("failed to decode response body: %w (body: %s)", err, string(respBodyBytes))
+		if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
+			return fmt.Errorf("failed to decode response: %w", err)
 		}
 	}
 
@@ -142,18 +115,18 @@ func (c *Client) Get(ctx context.Context, path string, result interface{}) error
 }
 
 // Post performs a POST request.
-func (c *Client) Post(ctx context.Context, path string, requestBody interface{}, result interface{}) error {
-	return c.doRequest(ctx, http.MethodPost, path, requestBody, result)
+func (c *Client) Post(ctx context.Context, path string, body io.Reader, result interface{}) error {
+	return c.doRequest(ctx, http.MethodPost, path, body, result)
 }
 
 // Put performs a PUT request.
-func (c *Client) Put(ctx context.Context, path string, requestBody interface{}, result interface{}) error {
-	return c.doRequest(ctx, http.MethodPut, path, requestBody, result)
+func (c *Client) Put(ctx context.Context, path string, body io.Reader, result interface{}) error {
+	return c.doRequest(ctx, http.MethodPut, path, body, result)
 }
 
 // Patch performs a PATCH request.
-func (c *Client) Patch(ctx context.Context, path string, requestBody interface{}, result interface{}) error {
-	return c.doRequest(ctx, http.MethodPatch, path, requestBody, result)
+func (c *Client) Patch(ctx context.Context, path string, body io.Reader, result interface{}) error {
+	return c.doRequest(ctx, http.MethodPatch, path, body, result)
 }
 
 // Delete performs a DELETE request.

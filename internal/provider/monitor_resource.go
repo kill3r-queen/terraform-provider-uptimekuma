@@ -85,7 +85,7 @@ func (r *MonitorResource) Schema(ctx context.Context, req resource.SchemaRequest
 			},
 			"description": schema.StringAttribute{
 				MarkdownDescription: "Monitor description.",
-				Optional:            true,
+				Required:            true,
 			},
 			"url": schema.StringAttribute{
 				MarkdownDescription: "URL to monitor (required for http, keyword monitors).",

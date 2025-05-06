@@ -1,5 +1,5 @@
 // Copyright (c) HashiCorp, Inc.
-// SPDX-License-Identifier: MPL-2.0.
+// SPDX-License-Identifier: MPL-2.0
 
 package provider
 
@@ -15,15 +15,13 @@ import (
 )
 
 func TestAccMonitorResource(t *testing.T) {
-	initialDescription := "Test HTTP Monitor Description"
-	updatedDescription := "Updated Test HTTP Monitor Description"
-
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
+			// Create and Read testing.
 			{
-				Config: testAccMonitorResourceConfig("HTTP Monitor", "http", "https://example.com", initialDescription),
+				Config: testAccMonitorResourceConfig("HTTP Monitor", "http", "https://example.com", "description"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
 						"uptimekuma_monitor.test",
@@ -40,22 +38,25 @@ func TestAccMonitorResource(t *testing.T) {
 						tfjsonpath.New("url"),
 						knownvalue.StringExact("https://example.com"),
 					),
+
 					statecheck.ExpectKnownValue(
 						"uptimekuma_monitor.test",
 						tfjsonpath.New("description"),
-						knownvalue.StringExact(initialDescription),
+						knownvalue.StringExact("description"),
 					),
 				},
 			},
+			// ImportState testing.
 			{
 				ResourceName:      "uptimekuma_monitor.test",
 				ImportState:       true,
 				ImportStateVerify: true,
-
+				// Certain fields may not be returned by the API and should be excluded from import verification.
 				ImportStateVerifyIgnore: []string{"basic_auth_pass"},
 			},
+			// Update and Read testing.
 			{
-				Config: testAccMonitorResourceConfig("Updated HTTP Monitor", "http", "https://updated-example.com", updatedDescription),
+				Config: testAccMonitorResourceConfig("Updated HTTP Monitor", "http", "https://updated-example.com", "descriptionupdate"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
 						"uptimekuma_monitor.test",
@@ -70,10 +71,11 @@ func TestAccMonitorResource(t *testing.T) {
 					statecheck.ExpectKnownValue(
 						"uptimekuma_monitor.test",
 						tfjsonpath.New("description"),
-						knownvalue.StringExact(updatedDescription),
+						knownvalue.StringExact("descriptionupdate"),
 					),
 				},
 			},
+			// Delete testing automatically occurs in TestCase.
 		},
 	})
 }
@@ -86,15 +88,13 @@ provider "uptimekuma" {
   password = "%s"
 }
 
-resource "uptimekuma_monitor" "test" {
-  name            = %[4]q // Index 4 = name
-  type            = %[5]q // Index 5 = monitorType
-  url             = %[6]q // Index 6 = url
-  description     = %[7]q // Index 7 = description (Keep this line)
-  interval        = 60
-  max_retries     = 3
-  retry_interval  = 30
-}
+name            = %[4]q // Index 4 = name
+type            = %[5]q // Index 5 = monitorType
+url             = %[6]q // Index 6 = url
+description     = %[7]q // Index 7 = description (Keep this line)
+interval        = 60
+max_retries     = 3
+retry_interval  = 30
 `,
 		os.Getenv("UPTIMEKUMA_BASE_URL"),
 		os.Getenv("UPTIMEKUMA_USERNAME"),
@@ -103,16 +103,13 @@ resource "uptimekuma_monitor" "test" {
 }
 
 func TestAccPingMonitorResource(t *testing.T) {
-	// CHANGE HERE: Define a description for the ping test.
-	pingDescription := "Test Ping Description"
-
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
+			// Create and Read testing.
 			{
-				// CHANGE HERE: Pass 'pingDescription' as the third argument (line 112 in original error).
-				Config: testAccPingMonitorResourceConfig("Ping Monitor", "example.com", pingDescription),
+				Config: testAccPingMonitorResourceConfig("Ping Monitor", "example.com", "pingdescription"),
 				ConfigStateChecks: []statecheck.StateCheck{
 					statecheck.ExpectKnownValue(
 						"uptimekuma_monitor.ping_test",
@@ -129,19 +126,18 @@ func TestAccPingMonitorResource(t *testing.T) {
 						tfjsonpath.New("hostname"),
 						knownvalue.StringExact("example.com"),
 					),
-					// CHANGE HERE: Add state check for description.
 					statecheck.ExpectKnownValue(
 						"uptimekuma_monitor.ping_test",
 						tfjsonpath.New("description"),
-						knownvalue.StringExact(pingDescription),
+						knownvalue.StringExact("pingdescription"),
 					),
 				},
 			},
+			// Delete testing automatically occurs in TestCase.
 		},
 	})
 }
 
-// Keep the testAccPingMonitorResourceConfig function definition as you already had it.
 func testAccPingMonitorResourceConfig(name, hostname, description string) string {
 	return fmt.Sprintf(`
 provider "uptimekuma" {
@@ -151,12 +147,12 @@ provider "uptimekuma" {
 }
 
 resource "uptimekuma_monitor" "ping_test" {
-  name            = %[4]q
-  type            = "ping"
-  hostname        = %[5]q
-  description     = %[6]q
-  interval        = 60
-  max_retries     = 3
+name            = %[4]q
+type            = "ping"
+hostname        = %[5]q
+description     = %[6]q
+interval        = 60
+max_retries     = 3
 }
 `,
 		os.Getenv("UPTIMEKUMA_BASE_URL"),

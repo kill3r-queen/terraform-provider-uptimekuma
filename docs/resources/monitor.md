@@ -84,6 +84,7 @@ resource "uptimekuma_monitor" "authenticated_http" {
 
 ### Required
 
+- `description` (String) Monitor description.
 - `name` (String) Monitor name.
 - `type` (String) Monitor type (http, ping, port, etc.).
 
@@ -93,7 +94,6 @@ resource "uptimekuma_monitor" "authenticated_http" {
 - `basic_auth_pass` (String, Sensitive) Basic auth password.
 - `basic_auth_user` (String) Basic auth username.
 - `body` (String) Request body for http monitors.
-- `description` (String) Monitor description.
 - `headers` (String) Request headers for http monitors (JSON format).
 - `hostname` (String) Hostname for ping, port, etc. monitors.
 - `ignore_tls` (Boolean) Ignore TLS/SSL errors.
