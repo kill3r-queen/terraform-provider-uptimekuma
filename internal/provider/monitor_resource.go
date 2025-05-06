@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -288,10 +289,22 @@ func (r *MonitorResource) Read(ctx context.Context, req resource.ReadRequest, re
 	}
 
 	monitorID := int(data.ID.ValueInt64())
+	tflog.Debug(ctx, "Reading monitor from API", map[string]interface{}{"id": monitorID})
 
 	// Read the monitor from the API.
 	monitor, err := r.client.GetMonitor(ctx, monitorID)
+
+	// --- START FIX for Read Error Handling ---
 	if err != nil {
+		// This is a basic example assuming a string check:
+		if strings.Contains(err.Error(), "Not Found") || strings.Contains(err.Error(), "404") {
+			// Resource is gone upstream, remove it from state
+			tflog.Warn(ctx, "Monitor not found, removing from state", map[string]interface{}{"id": monitorID})
+			resp.State.RemoveResource(ctx) // Tell Terraform the resource no longer exists
+			return                         // Stop processing
+		}
+
+		// For other errors, report them
 		resp.Diagnostics.AddError(
 			"Client Error",
 			fmt.Sprintf("Unable to read monitor %d: %s", monitorID, err),
@@ -299,7 +312,7 @@ func (r *MonitorResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	// Update the data model.
+	// If no error, update the data model from the successful API response.
 	data.ID = types.Int64Value(int64(monitor.ID))
 	data.Type = types.StringValue(string(monitor.Type))
 	data.Name = types.StringValue(monitor.Name)
@@ -307,6 +320,7 @@ func (r *MonitorResource) Read(ctx context.Context, req resource.ReadRequest, re
 	data.URL = types.StringValue(monitor.URL)
 	data.Method = types.StringValue(monitor.Method)
 	data.Hostname = types.StringValue(monitor.Hostname)
+	// Handle potential nil or zero values appropriately when converting from API type to TF type.
 	data.Port = types.Int64Value(int64(monitor.Port))
 	data.Interval = types.Int64Value(int64(monitor.Interval))
 	data.RetryInterval = types.Int64Value(int64(monitor.RetryInterval))
@@ -319,7 +333,8 @@ func (r *MonitorResource) Read(ctx context.Context, req resource.ReadRequest, re
 	data.Headers = types.StringValue(monitor.Headers)
 	data.AuthMethod = types.StringValue(string(monitor.AuthMethod))
 	data.BasicAuthUser = types.StringValue(monitor.BasicAuthUser)
-	data.BasicAuthPass = types.StringValue(monitor.BasicAuthPass)
+	// Do not read back sensitive values like passwords unless necessary and handled correctly.
+	// data.BasicAuthPass = types.StringValue(monitor.BasicAuthPass).
 	data.Keyword = types.StringValue(monitor.Keyword)
 
 	// Save updated data into Terraform state.
