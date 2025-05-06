@@ -351,7 +351,7 @@ func (r *MonitorResource) Update(ctx context.Context, req resource.UpdateRequest
 		IgnoreTLS:      data.IgnoreTLS.ValueBool(),
 	}
 
-	// Set optional fields.
+	// Set optional field.
 	if !data.URL.IsNull() {
 		monitor.URL = data.URL.ValueString()
 	}
