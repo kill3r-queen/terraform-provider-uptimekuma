@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-// TestMonitorOperations tests monitor API operations
+// TestMonitorOperations tests monitor API operations.
 func TestMonitorOperations(t *testing.T) {
 	// Setup monitors for the mock server
 	monitors := []Monitor{
@@ -53,7 +53,7 @@ func TestMonitorOperations(t *testing.T) {
 		if r.URL.Path == "/login/access-token" {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(TokenResponse{
+			_ = json.NewEncoder(w).Encode(TokenResponse{
 				AccessToken: "test-token-12345",
 				TokenType:   "Bearer",
 			})
@@ -75,7 +75,7 @@ func TestMonitorOperations(t *testing.T) {
 			case http.MethodGet:
 				// List monitors.
 				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(monitors)
+				_ = json.NewEncoder(w).Encode(monitors)
 				return
 			case http.MethodPost:
 				// Create monitor.
@@ -107,7 +107,7 @@ func TestMonitorOperations(t *testing.T) {
 				if strings.Contains(r.URL.Path, "/pause") {
 					idStr = strings.TrimSuffix(parts[2], "/pause")
 					id, err = strconv.Atoi(idStr)
-					if err != nil {
+					if _, err = strconv.Atoi(idStr); err != nil {
 						w.WriteHeader(http.StatusBadRequest)
 						return
 					}
@@ -116,7 +116,7 @@ func TestMonitorOperations(t *testing.T) {
 				} else if strings.Contains(r.URL.Path, "/resume") {
 					idStr = strings.TrimSuffix(parts[2], "/resume")
 					id, err = strconv.Atoi(idStr)
-					if err != nil {
+					if _, err = strconv.Atoi(idStr); err != nil {
 						w.WriteHeader(http.StatusBadRequest)
 						return
 					}
@@ -125,12 +125,12 @@ func TestMonitorOperations(t *testing.T) {
 				} else if strings.Contains(r.URL.Path, "/beats") {
 					idStr = strings.TrimSuffix(parts[2], "/beats")
 					id, err = strconv.Atoi(idStr)
-					if err != nil {
+					if _, err = strconv.Atoi(idStr); err != nil {
 						w.WriteHeader(http.StatusBadRequest)
 						return
 					}
 					w.WriteHeader(http.StatusOK)
-					json.NewEncoder(w).Encode(map[string]interface{}{
+					_ = json.NewEncoder(w).Encode(map[string]interface{}{
 						"beats": []map[string]interface{}{
 							{"status": 1, "time": time.Now().Unix()},
 							{"status": 1, "time": time.Now().Unix() - 60},
@@ -145,7 +145,8 @@ func TestMonitorOperations(t *testing.T) {
 						return
 					}
 
-					if r.Method == http.MethodPost {
+					switch r.Method {
+					case http.MethodPost:
 						// Add tag.
 						var tagData map[string]interface{}
 						if err := json.NewDecoder(r.Body).Decode(&tagData); err != nil {
@@ -154,7 +155,8 @@ func TestMonitorOperations(t *testing.T) {
 						}
 						w.WriteHeader(http.StatusOK)
 						return
-					} else if r.Method == http.MethodDelete {
+
+					case http.MethodDelete:
 						// Delete tag.
 						var tagData map[string]interface{}
 						if err := json.NewDecoder(r.Body).Decode(&tagData); err != nil {
@@ -193,7 +195,7 @@ func TestMonitorOperations(t *testing.T) {
 			case http.MethodGet:
 				// Get monitor.
 				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(monitors[monitorIndex])
+				_ = json.NewEncoder(w).Encode(monitors[monitorIndex])
 				return
 			case http.MethodPatch:
 				// Update monitor.
@@ -206,7 +208,7 @@ func TestMonitorOperations(t *testing.T) {
 				updateData.ID = monitors[monitorIndex].ID
 				monitors[monitorIndex] = updateData
 				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(updateData)
+				_ = json.NewEncoder(w).Encode(updateData)
 				return
 			case http.MethodDelete:
 				// Delete monitor.
