@@ -87,7 +87,7 @@ func TestMonitorOperations(t *testing.T) {
 				newMonitor.ID = len(monitors) + 1
 				monitors = append(monitors, newMonitor)
 				w.WriteHeader(http.StatusOK)
-				json.NewEncoder(w).Encode(newMonitor)
+				_ = json.NewEncoder(w).Encode(newMonitor)
 				return
 			}
 		} else if strings.HasPrefix(r.URL.Path, "/monitors/") {
