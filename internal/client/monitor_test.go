@@ -106,7 +106,6 @@ func TestMonitorOperations(t *testing.T) {
 				// Special handling for action endpoints.
 				if strings.Contains(r.URL.Path, "/pause") {
 					idStr = strings.TrimSuffix(parts[2], "/pause")
-					id, err = strconv.Atoi(idStr)
 					if _, err = strconv.Atoi(idStr); err != nil {
 						w.WriteHeader(http.StatusBadRequest)
 						return
@@ -115,7 +114,6 @@ func TestMonitorOperations(t *testing.T) {
 					return
 				} else if strings.Contains(r.URL.Path, "/resume") {
 					idStr = strings.TrimSuffix(parts[2], "/resume")
-					id, err = strconv.Atoi(idStr)
 					if _, err = strconv.Atoi(idStr); err != nil {
 						w.WriteHeader(http.StatusBadRequest)
 						return
@@ -124,7 +122,6 @@ func TestMonitorOperations(t *testing.T) {
 					return
 				} else if strings.Contains(r.URL.Path, "/beats") {
 					idStr = strings.TrimSuffix(parts[2], "/beats")
-					id, err = strconv.Atoi(idStr)
 					if _, err = strconv.Atoi(idStr); err != nil {
 						w.WriteHeader(http.StatusBadRequest)
 						return
