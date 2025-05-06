@@ -15,6 +15,11 @@ import (
 )
 
 func TestAccStatusPageResource(t *testing.T) {
+	// Skip check.
+	if os.Getenv("TF_ACC") == "" {
+		t.Skip("Acceptance tests skipped unless TF_ACC is set")
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -77,6 +82,7 @@ func TestAccStatusPageResource(t *testing.T) {
 	})
 }
 
+// Note: This config function definition remains unchanged.
 func testAccStatusPageResourceConfig(slug, title, description string) string {
 	return fmt.Sprintf(`
 provider "uptimekuma" {
@@ -101,6 +107,11 @@ resource "uptimekuma_status_page" "test" {
 }
 
 func TestAccStatusPageResourceWithGroups(t *testing.T) {
+	// Skip check.
+	if os.Getenv("TF_ACC") == "" {
+		t.Skip("Acceptance tests skipped unless TF_ACC is set")
+	}
+
 	resource.Test(t, resource.TestCase{
 		PreCheck:                 func() { testAccPreCheck(t) },
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -119,8 +130,29 @@ func TestAccStatusPageResourceWithGroups(t *testing.T) {
 						tfjsonpath.New("title"),
 						knownvalue.StringExact("Status Page With Groups"),
 					),
-					// We can't easily test the exact structure of nested blocks like public_group_list.
-					// in this basic test, but we can verify the status page itself is created.
+					statecheck.ExpectKnownValue(
+						"uptimekuma_status_page.with_groups",
+						tfjsonpath.New("public_group_list[0].name"),
+						knownvalue.StringExact("Core Services"),
+					),
+					// Check the name of the second group element [1].
+					statecheck.ExpectKnownValue(
+						"uptimekuma_status_page.with_groups",
+						tfjsonpath.New("public_group_list[1].name"),
+						knownvalue.StringExact("Secondary Services"),
+					),
+					// Check weight of first group.
+					statecheck.ExpectKnownValue(
+						"uptimekuma_status_page.with_groups",
+						tfjsonpath.New("public_group_list[0].weight"),
+						knownvalue.Int64Exact(1), 
+					),
+					// Check weight of second group.
+					 statecheck.ExpectKnownValue(
+						"uptimekuma_status_page.with_groups",
+						tfjsonpath.New("public_group_list[1].weight"),
+						knownvalue.Int64Exact(2),
+					 ),
 				},
 			},
 			// Delete testing automatically occurs in TestCase.
@@ -128,6 +160,7 @@ func TestAccStatusPageResourceWithGroups(t *testing.T) {
 	})
 }
 
+// Note: This config function definition remains unchanged.
 func testAccStatusPageResourceWithGroupsConfig(slug, title string) string {
 	return fmt.Sprintf(`
 provider "uptimekuma" {
@@ -136,20 +169,19 @@ provider "uptimekuma" {
   password = "%s"
 }
 
+// Define dependent monitors for the group test
 resource "uptimekuma_monitor" "http1" {
-  name     = "HTTP Monitor 1"
-  description = "string"
+  name     = "HTTP Monitor 1 for Group Test" // Make names unique for testing
   type     = "http"
-  url      = "https://example.com"
-  interval = 60
+  url      = "https://example.com/health"
+  interval = 300 // Use longer intervals for Acc tests unless testing interval itself
 }
 
 resource "uptimekuma_monitor" "http2" {
-  name     = "HTTP Monitor 2"
-  description = "string"
+  name     = "HTTP Monitor 2 for Group Test" // Make names unique for testing
   type     = "http"
-  url      = "https://example.org"
-  interval = 60
+  url      = "https://example.org/status"
+  interval = 300
 }
 
 resource "uptimekuma_status_page" "with_groups" {
@@ -157,20 +189,20 @@ resource "uptimekuma_status_page" "with_groups" {
   title     = %[5]q
   published = true
   theme     = "dark"
-  
+
   public_group_list {
     name = "Core Services"
     weight = 1
     monitor_list = [
-      uptimekuma_monitor.http1.id
+      uptimekuma_monitor.http1.id // Reference the monitor defined above
     ]
   }
-  
+
   public_group_list {
     name = "Secondary Services"
     weight = 2
     monitor_list = [
-      uptimekuma_monitor.http2.id
+      uptimekuma_monitor.http2.id // Reference the monitor defined above
     ]
   }
 }
